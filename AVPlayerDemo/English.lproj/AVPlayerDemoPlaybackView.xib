@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AVPlayerDemoPlaybackViewController">
+            <connections>
+                <outlet property="mPlayButton" destination="38" id="41"/>
+                <outlet property="mPlaybackView" destination="3" id="6"/>
+                <outlet property="mScrubber" destination="40" id="43"/>
+                <outlet property="mStopButton" destination="39" id="42"/>
+                <outlet property="mToolbar" destination="37" id="48"/>
+                <outlet property="view" destination="1" id="5"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view opaque="NO" contentMode="scaleToFill" id="1">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" id="3" customClass="AVPlayerDemoPlaybackView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackTranslucent" id="37">
+                            <rect key="frame" x="0.0" y="416" width="320" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <items/>
+                        </toolbar>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+        </view>
+        <barButtonItem style="plain" systemItem="play" id="38">
+            <connections>
+                <action selector="play:" destination="-1" id="55"/>
+            </connections>
+        </barButtonItem>
+        <barButtonItem style="plain" systemItem="pause" id="39">
+            <connections>
+                <action selector="pause:" destination="-1" id="56"/>
+            </connections>
+        </barButtonItem>
+        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" id="40">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="29"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+            <connections>
+                <action selector="beginScrubbing:" destination="-1" eventType="touchDown" id="51"/>
+                <action selector="endScrubbing:" destination="-1" eventType="touchUpOutside" id="57"/>
+                <action selector="endScrubbing:" destination="-1" eventType="touchUpInside" id="58"/>
+                <action selector="endScrubbing:" destination="-1" eventType="touchCancel" id="60"/>
+                <action selector="scrub:" destination="-1" eventType="valueChanged" id="54"/>
+                <action selector="scrub:" destination="-1" eventType="touchDragInside" id="59"/>
+            </connections>
+        </slider>
+    </objects>
+</document>
