@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00E4E4EF1CCB65E400E695B0 /* PopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E4E4ED1CCB65E400E695B0 /* PopViewController.m */; };
+		00E4E4F01CCB65E400E695B0 /* PopViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -24,11 +26,6 @@
 		84C18D42172F40C900E0F687 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84C18D41172F40C900E0F687 /* Default-568h@2x.png */; };
 		9E4D8BAE1CC9EEF2008F637C /* playlist.m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BAD1CC9EEF2008F637C /* playlist.m3u8 */; };
 		9E4D8BB01CC9EEFA008F637C /* sl.m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BAF1CC9EEFA008F637C /* sl.m3u8 */; };
-		9E4D8BB21CC9F229008F637C /* output.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BB11CC9F229008F637C /* output.mp4 */; };
-		9E4D8BB41CC9FE64008F637C /* tech_review_audio_mixing.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BB31CC9FE64008F637C /* tech_review_audio_mixing.mp4 */; };
-		9E4D8BB81CCA3077008F637C /* TrackSelectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D8BB61CCA3077008F637C /* TrackSelectionVC.m */; };
-		9E4D8BB91CCA3077008F637C /* TrackSelectionVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BB71CCA3077008F637C /* TrackSelectionVC.xib */; };
-		9E4D8BBB1CCA556D008F637C /* count_audio.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BBA1CCA556D008F637C /* count_audio.mp4 */; };
 		AF23D2E2133D524A00A5E64A /* AVPlayerDemoMetadataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF23D2E1133D524A00A5E64A /* AVPlayerDemoMetadataView.xib */; };
 		AF23D2E8133D527B00A5E64A /* AVPlayerDemoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF23D2E7133D527B00A5E64A /* AVPlayerDemoWindow.xib */; };
 		AF23D330133D563900A5E64A /* AVPlayerDemoMetadataView-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF23D32F133D563900A5E64A /* AVPlayerDemoMetadataView-iPad.xib */; };
@@ -57,6 +54,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00E4E4EC1CCB65E400E695B0 /* PopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopViewController.h; sourceTree = "<group>"; };
+		00E4E4ED1CCB65E400E695B0 /* PopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopViewController.m; sourceTree = "<group>"; };
+		00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PopViewController.xib; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* AVPlayerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AVPlayerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -80,12 +80,6 @@
 		8D1107310486CEB800E47090 /* AVPlayerDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AVPlayerDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		9E4D8BAD1CC9EEF2008F637C /* playlist.m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = playlist.m3u8; sourceTree = "<group>"; };
 		9E4D8BAF1CC9EEFA008F637C /* sl.m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sl.m3u8; sourceTree = "<group>"; };
-		9E4D8BB11CC9F229008F637C /* output.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = output.mp4; sourceTree = "<group>"; };
-		9E4D8BB31CC9FE64008F637C /* tech_review_audio_mixing.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = tech_review_audio_mixing.mp4; sourceTree = "<group>"; };
-		9E4D8BB51CCA3077008F637C /* TrackSelectionVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackSelectionVC.h; sourceTree = "<group>"; };
-		9E4D8BB61CCA3077008F637C /* TrackSelectionVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackSelectionVC.m; sourceTree = "<group>"; };
-		9E4D8BB71CCA3077008F637C /* TrackSelectionVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackSelectionVC.xib; sourceTree = "<group>"; };
-		9E4D8BBA1CCA556D008F637C /* count_audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = count_audio.mp4; sourceTree = "<group>"; };
 		AF23D2D9133D523500A5E64A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/AVPlayerDemoMetadataView.xib; sourceTree = "<group>"; };
 		AF23D2DC133D523500A5E64A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/AVPlayerDemoWindow.xib; sourceTree = "<group>"; };
 		AF23D327133D560500A5E64A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = "English.lproj/AVPlayerDemoMetadataView-iPad.xib"; sourceTree = "<group>"; };
@@ -194,9 +188,6 @@
 				9E4D8BAF1CC9EEFA008F637C /* sl.m3u8 */,
 				8D1107310486CEB800E47090 /* AVPlayerDemo-Info.plist */,
 				9E4D8BAD1CC9EEF2008F637C /* playlist.m3u8 */,
-				9E4D8BBA1CCA556D008F637C /* count_audio.mp4 */,
-				9E4D8BB11CC9F229008F637C /* output.mp4 */,
-				9E4D8BB31CC9FE64008F637C /* tech_review_audio_mixing.mp4 */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -250,9 +241,9 @@
 				832FD03111AC05FE0004EA2D /* AVPlayerDemoPlaybackViewController.m */,
 				83069BFE11A9FC93006897BE /* AVPlayerDemoPlaybackView.h */,
 				83069BFF11A9FC93006897BE /* AVPlayerDemoPlaybackView.m */,
-				9E4D8BB51CCA3077008F637C /* TrackSelectionVC.h */,
-				9E4D8BB61CCA3077008F637C /* TrackSelectionVC.m */,
-				9E4D8BB71CCA3077008F637C /* TrackSelectionVC.xib */,
+				00E4E4EC1CCB65E400E695B0 /* PopViewController.h */,
+				00E4E4ED1CCB65E400E695B0 /* PopViewController.m */,
+				00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */,
 			);
 			name = Playback;
 			sourceTree = "<group>";
@@ -330,7 +321,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E4D8BBB1CCA556D008F637C /* count_audio.mp4 in Resources */,
 				AFFB6C33133C5AF500530D6D /* iTunesArtwork in Resources */,
 				AFFB6C34133C5AF500530D6D /* Placeholder.png in Resources */,
 				AFFB6C35133C5AF500530D6D /* Icon@2x.png in Resources */,
@@ -341,12 +331,10 @@
 				AFFB6C39133C5AF500530D6D /* Icon-Small-50.png in Resources */,
 				AFFB6C3A133C5AF500530D6D /* Icon-72.png in Resources */,
 				AF23D2E2133D524A00A5E64A /* AVPlayerDemoMetadataView.xib in Resources */,
-				9E4D8BB21CC9F229008F637C /* output.mp4 in Resources */,
 				AF23D2E8133D527B00A5E64A /* AVPlayerDemoWindow.xib in Resources */,
 				AF23D330133D563900A5E64A /* AVPlayerDemoMetadataView-iPad.xib in Resources */,
 				9E4D8BB01CC9EEFA008F637C /* sl.m3u8 in Resources */,
-				9E4D8BB41CC9FE64008F637C /* tech_review_audio_mixing.mp4 in Resources */,
-				9E4D8BB91CCA3077008F637C /* TrackSelectionVC.xib in Resources */,
+				00E4E4F01CCB65E400E695B0 /* PopViewController.xib in Resources */,
 				AF23D334133D565700A5E64A /* AVPlayerDemoPlaybackView-iPad.xib in Resources */,
 				AF9547101354DFDE00AC186A /* AVPlayerDemoPlaybackView.xib in Resources */,
 				AFA92758138468CD001CD46B /* AVPlayerDemoWindow-iPad.xib in Resources */,
@@ -367,13 +355,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E4D8BB81CCA3077008F637C /* TrackSelectionVC.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				83069C0011A9FC93006897BE /* AVPlayerDemoPlaybackView.m in Sources */,
 				832FD03211AC05FE0004EA2D /* AVPlayerDemoPlaybackViewController.m in Sources */,
 				836F144411AC293600C0AD10 /* AVPlayerDemoMetadataViewController.m in Sources */,
 				83A199A111B1CE2200DAD6FE /* AVPlayerDemoAppDelegate.m in Sources */,
 				AF31C31B1380EF3500D8B2C7 /* AssetTabBarController.m in Sources */,
+				00E4E4EF1CCB65E400E695B0 /* PopViewController.m in Sources */,
 				AFCF602813940F9B00D7A99C /* AssetBrowserSource.m in Sources */,
 				AFCF602913940F9B00D7A99C /* AssetBrowserItem.m in Sources */,
 				AFCF602A13940F9B00D7A99C /* AssetBrowserController.m in Sources */,

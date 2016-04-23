@@ -49,8 +49,20 @@
 #import "AVPlayerDemoPlaybackViewController.h"
 #import "AVPlayerDemoPlaybackView.h"
 #import "AVPlayerDemoMetadataViewController.h"
+#import "PopViewController.h"
 
-@interface AVPlayerDemoPlaybackViewController ()
+@interface AVPlayerDemoPlaybackViewController  () <UIPopoverPresentationControllerDelegate>
+{
+
+}
+
+@property (nonatomic, strong) NSMutableArray* audioTracks;
+@property (nonatomic, strong) NSMutableArray* selectedAudioTracks;
+@property (nonatomic, strong) AVMediaSelectionOption* selectedAudioOption;
+
+
+@property (nonatomic) NSUInteger selectedTrackIndex;
+@property (nonatomic, strong) UIButton *btnSelectLanguage;
 
 - (void)play:(id)sender;
 - (void)pause:(id)sender;
@@ -92,6 +104,74 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
 @implementation AVPlayerDemoPlaybackViewController
 
 @synthesize mPlayer, mPlayerItem, mPlaybackView, mToolbar, mPlayButton, mStopButton, mScrubber;
+
+#pragma mark - PopoverView Methods
+
+- (IBAction)selectTrackButtonPressed:(id)sender {
+    
+    if (self.audioTracks.count < 1)
+        return;
+    
+    self.btnSelectLanguage.selected = !self.btnSelectLanguage.selected;
+    self.selectedAudioTracks        = nil;
+    PopViewController* contentVC = [[PopViewController alloc]     initWithNibName:@"PopViewController" bundle:nil];
+    // present the controller
+    // on iPad, this will be a Popover
+    // on iPhone, this will be an action sheet
+    contentVC.modalPresentationStyle = UIModalPresentationPopover;
+    contentVC.audioTracks = [[NSArray alloc] initWithArray:self.audioTracks];
+    contentVC.popoverPresentationController.sourceRect = self.btnSelectLanguage.frame; // 15
+    contentVC.popoverPresentationController.sourceView = self.view; // 16
+    
+    // configure the Popover presentation controller
+    UIPopoverPresentationController *popController = [contentVC popoverPresentationController];
+    popController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    //popController.barButtonItem = self.navigationItem.rightBarButtonItem;
+    popController.delegate = self;
+    
+    [self presentViewController:contentVC animated:YES completion:nil];
+
+}
+
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
+    NSLog(@"%s",__FUNCTION__);
+    self.btnSelectLanguage.selected = !self.btnSelectLanguage.selected ;
+    // called when a Popover is dismissed
+}
+
+- (BOOL)popoverPresentationControllerShouldDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
+    NSLog(@"%s",__FUNCTION__);
+
+    // return YES if the Popover should be dismissed
+    // return NO if the Popover should not be dismissed
+    
+   PopViewController *popViewController  = (PopViewController *)popoverPresentationController.presentedViewController;
+    
+    NSArray *selectedRows       = popViewController.tableView.indexPathsForSelectedRows;
+    self.selectedAudioTracks    = [[NSMutableArray alloc] init];
+    
+    for (NSIndexPath *indexPath in selectedRows) {
+        NSLog(@"Track:%@",[popViewController.audioTracks objectAtIndex:indexPath.row]);
+        [self.selectedAudioTracks addObject:[popViewController.audioTracks objectAtIndex:indexPath.row]];
+    }
+    
+    [self changeAudioTrack];
+
+    return YES;
+}
+
+- (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing  _Nonnull *)view {
+    NSLog(@"%s",__FUNCTION__);
+
+    // called when the Popover changes positon
+}
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
+    
+    return UIModalPresentationNone; //UIModalPresentationPopover
+}
+
 
 #pragma mark Asset URL
 
@@ -138,106 +218,72 @@ float volume = 0.0;
 {
 	/* If we are at the end of the movie, we must seek to the beginning first 
 		before starting playback. */
+    
 	if (YES == seekToZeroBeforePlay) 
 	{
 		seekToZeroBeforePlay = NO;
 		[self.mPlayer seekToTime:kCMTimeZero];
 	}
-   // [self switchToAudioLanguage:@""];
-
     //[self muteVideo];
+    //[self swichtToSelectedTrack];
 	[self.mPlayer play];
     [self showStopButton];
 }
 
-//- (void)switchToAudioLanguage:(NSString *)lang {
-//    /*NSURL *fileURL = [[NSBundle mainBundle]
-//                      URLForResource:@"movie" withExtension:@"mp4"];
-//    
-//    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:fileURL options:nil];*/
-//    
-//    AVURLAsset *asset = (AVURLAsset*)[[self.player currentItem] asset];
-//
-//    
-//    AVMutableComposition *composition = [AVMutableComposition composition];
-//    
-//    AVMutableCompositionTrack *compositionVideoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
-//    NSError* error = NULL;
-//    
-//    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,asset.duration)
-//                                   ofTrack:[[asset tracksWithMediaType:AVMediaTypeVideo]objectAtIndex:0]
-//                                    atTime:kCMTimeZero
-//                                     error:&error];
-//    
-//    NSArray *allAudio = [asset tracksWithMediaType:AVMediaTypeAudio];
-//    for (NSUInteger i=0; i < [allAudio count]; i++) {
-//        NSError* error = NULL;
-//        AVAssetTrack *audioAsset = (AVAssetTrack*)[allAudio objectAtIndex:i];
-//        
-//        AVMutableCompositionTrack *compositionAudioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-//        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,asset.duration)
-//                                       ofTrack:audioAsset
-//                                        atTime:kCMTimeZero
-//                                         error:&error];
-//        
-//        NSLog(@"Error : %@", error);
-//        
-//    }
-//    
-//}
-//
+
 
 - (NSArray *)getAvailableAudioTracks
 {
-    
-    NSArray *tracks = [[self.player currentItem] tracks];
-    NSLog(@"tracks %@", tracks);
-    
-    
-    
+    AVAsset *asset = [[self.mPlayer currentItem] asset];
+
     //** 1st Way
-    NSMutableArray *availableAudioTrackList = [[NSMutableArray alloc] init];
-    AVMediaSelectionGroup *audoTracks = [self.mPlayer.currentItem.asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
-    AVMediaSelectionGroup *videoTracks = [self.mPlayer.currentItem.asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicVisual];
+    AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+    AVMediaSelectionGroup *videoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicVisual];
     
     NSLog(@"audio tracks 1 %@", audoTracks);
     NSLog(@"video tracks 1 %@", videoTracks);
     
-    /*//AVMediaSelectionOptionFiltering
-    for (AVMediaSelectionOption *opt in audioTracks.options)
+    [self.audioTracks removeAllObjects];
+    for (AVMediaSelectionOption *option in audoTracks.options)
     {
-        NSLog(@"Opt: %@", opt);
-        //CMPersistentTrackID trackID =
-        [availableAudioTrackList addObject:opt.displayName];
-        
-        NSArray *metaDatas = [AVMetadataItem metadataItemsFromArray:opt.commonMetadata withKey:@"title" keySpace:@"comn"];
-        
-        if (metaDatas.count > 0) {
-            NSString *title = ((AVMetadataItem*)[metaDatas objectAtIndex:0]).stringValue;
-            NSLog(@"title: %@", title);
-        }
+        NSLog(@"Audio Track Display Name: %@", option.displayName);
+        [self.audioTracks addObject:option];
     }
-    NSLog(@"Audio Track Array: %@", availableAudioTrackList);
-    */
+    NSLog(@"Audio Track Array: %@", self.audioTracks);
     
     //** 2nd way
-    AVURLAsset *asset = (AVURLAsset*)[[self.mPlayer currentItem] asset];
-
-   // NSLog(@"_player.currentItem.tracks:%@", mPlayer.currentItem.tracks);
-    //NSLog(@"self.player.currentItem.tracks:%@",self.player.currentItem.tracks);
-    self.audioTracks = nil;
-    self.audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-    
     NSArray *videTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-    
-    NSLog(@"audio tracks 2 %@", self.audioTracks);
-    NSLog(@"video tracks 2 %@", videTracks);
-    
-   /* NSLog(@"self.audioTracks:%@", self.audioTracks);
+    NSArray *audiTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
 
+
+    NSLog(@"audio tracks 2 %@", audiTracks);
+    NSLog(@"video tracks 2 %@", videTracks);
+    ////////
+    [self getAllMediaCharacteristics];
+    return self.audioTracks;
+}
+
+- (void)changeAudioTrack {
+
+    if (self.selectedAudioTracks.count) {
+        self.selectedAudioOption    = [self.selectedAudioTracks objectAtIndex:0];
+        AVAsset *asset           = [[self.mPlayer currentItem] asset];
+        AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+        [[self.mPlayer currentItem] selectMediaOption:self.selectedAudioOption inMediaSelectionGroup:audoTracks];
+    }
+    [self getSelectedAudioOption];
+}
+
+- (void)getAllMediaCharacteristics {
+    NSArray *tracks = [[self.player currentItem] tracks];
+    NSLog(@"All Media Tracks:%@", tracks);
+    
+    NSLog(@"\n\n\n\n=======================================\n\n\n\n");
+
+    AVAsset *asset = [[self.mPlayer currentItem] asset];
     NSArray *mediaCharacteristics = asset.availableMediaCharacteristicsWithMediaSelectionOptions;
-    NSLog(@"charArray:%@",mediaCharacteristics);
-   
+    NSLog(@"Media Characteristics Array:%@",mediaCharacteristics);
+    
     for (NSString* characteristic in mediaCharacteristics) {
         NSLog(@"characteristic:%@",characteristic);
         AVMediaSelectionGroup *group = [asset mediaSelectionGroupForMediaCharacteristic:characteristic];
@@ -247,36 +293,82 @@ float volume = 0.0;
             
         }
     }
-    ////////
-    */
+}
+- (void)getSelectedAudioOption {
+    AVAsset *asset = [[self.mPlayer currentItem] asset];
+    AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+    NSLog(@"Selected Audio Option:%@", [[self.mPlayer currentItem] selectedMediaOptionInMediaSelectionGroup:audoTracks]);
+
+}
+
+- (void)adjustVolume {
     
-    return availableAudioTrackList;
+    AVURLAsset *asset = (AVURLAsset *)[[self.mPlayer currentItem] asset];
+    
+    AVMutableComposition *composition = [AVMutableComposition composition];
+    
+    AVMutableCompositionTrack *compositionVideoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    NSError* error = NULL;
+    
+    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,asset.duration)
+                                   ofTrack:[[asset tracksWithMediaType:AVMediaTypeVideo]objectAtIndex:0]
+                                    atTime:kCMTimeZero
+                                     error:&error];
+    
+    NSArray *allAudio = [asset tracksWithMediaType:AVMediaTypeAudio];
+    for (NSUInteger i=0; i < [allAudio count]; i++) {
+        NSError* error = NULL;
+        AVAssetTrack *audioAsset = (AVAssetTrack*)[allAudio objectAtIndex:i];
+        
+        AVMutableCompositionTrack *compositionAudioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,asset.duration)
+                                       ofTrack:audioAsset
+                                        atTime:kCMTimeZero
+                                         error:&error];
+        
+        NSLog(@"Error : %@", error);
+        
+    }
+}
+- (IBAction)pause:(id)sender
+{
+	[self.mPlayer pause];
+    [self showPlayButton];
 }
 
 - (void)swichtToSelectedTrack {
-  
-    if (self.audioTracks.count <2) {
-        return;
-    }
     
-    NSLog(@"selectedTrackIndex:%lu,\n self.audioTracks.count:%lu ",(unsigned long)self.selectedTrackIndex, (unsigned long)self.audioTracks.count);
+    AVAsset *asset = [[self.mPlayer currentItem] asset];
+    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+    
+    /*if (self.audioTracks.count <2) {
+     return;
+     }*/
+    
+    
+    NSLog(@"selectedTrackIndex:%lu,\n self.audioTracks.count:%lu ",(unsigned long)self.selectedTrackIndex, audioTracks.count);
     
     NSMutableArray *allAudioParams = [NSMutableArray array];
     NSUInteger i = 0;
-    for (AVAssetTrack *track in self.audioTracks)
+    //volume = (volume == 1 ? 0 : 1);
+    for (AVAssetTrack *track in audioTracks)
     {
         float trackVolume = 0.0;
-         if (i == self.selectedTrackIndex)
+        /* if (i == self.selectedTrackIndex)
          {
-           trackVolume = 1.0;
+         trackVolume = 1.0;
          }
+         */
         
-
         NSLog(@"languageCode:%@",track.languageCode);
         NSLog(@"extendedLanguageTag:%@",track.extendedLanguageTag);
         
+        if ([track.languageCode isEqualToString:@"hin"]) {
+            trackVolume = 1;
+        }
+        
         AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-
+        
         
         [audioInputParams setVolume:trackVolume atTime:kCMTimeZero];
         [audioInputParams setTrackID:[track trackID]];
@@ -286,185 +378,20 @@ float volume = 0.0;
     AVMutableAudioMix *audioZeroMix = [AVMutableAudioMix audioMix];
     [audioZeroMix setInputParameters:allAudioParams];
     
-    [[self.mPlayer currentItem] setAudioMix:audioZeroMix];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[self.mPlayer currentItem] setAudioMix:audioZeroMix];
+				});
     
     ++_selectedTrackIndex;
     
     if (self.selectedTrackIndex == self.audioTracks.count) {
         _selectedTrackIndex = 0;
     }
-
-    [self play:nil];
-}
-
-
-- (void)muteVideo {
     
-   /* [self getAvailableAudioTracks];
-    AVURLAsset *asset = (AVURLAsset*)[[self.mPlayer currentItem] asset];
-    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-
-    NSMutableArray *allAudioParams = [NSMutableArray array];
-    volume = (volume == 1 ? 0 : 1);
-    NSLog(@"=======%s,audioTracks:%@,\nvoluem:%f",__FUNCTION__,audioTracks, volume);
-    int i = 0;
-
-    for (AVAssetTrack *track in audioTracks)
-    {
-        NSLog(@"languageCode:%@",track.languageCode);
-        NSLog(@"extendedLanguageTag:%@",track.extendedLanguageTag);
-
-        AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-
-        float volume = 0.0;
-        if (i == 0)
-        {
-            volume = 1.0;
-        }
-        else
-        {
-            volume = 0.0;
-        }
-        
-        [audioInputParams setVolume:volume atTime:kCMTimeZero];
-        [audioInputParams setTrackID:[track trackID]];
-        [allAudioParams addObject:audioInputParams];
-        i++;
-    }
-    AVMutableAudioMix *audioZeroMix = [AVMutableAudioMix audioMix];
-    [audioZeroMix setInputParameters:allAudioParams];
+    //[self play:nil];
     
-    [[self.mPlayer currentItem] setAudioMix:audioZeroMix]; */
-}
-
-
-/*
-- (void) initializeToFirstAudioTrack
-{
-    self.audioTrackNumber = 0;
+    [self getSelectedAudioOption];
     
-    [self.currentAudioLanguageLabel setText:[self.audioLanguages objectAtIndex:self.audioTrackNumber]];
-    
-    AVURLAsset *asset = (AVURLAsset*)[[self.player currentItem] asset];
-    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-    
-    NSMutableArray *allAudioParams = [NSMutableArray array];
-    int i = 0;
-    for (AVAssetTrack *track in audioTracks)
-    {
-        AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-        float volume;
-        if (i == 0)
-        {
-            volume = 1.0;
-        }
-        else
-        {
-            volume = 0.0;
-        }
-        
-        [audioInputParams setVolume:volume atTime:kCMTimeZero];
-        [audioInputParams setTrackID:[track trackID]];
-        [allAudioParams addObject:audioInputParams];
-        i++;
-    }
-    AVMutableAudioMix *audioZeroMix = [AVMutableAudioMix audioMix];
-    [audioZeroMix setInputParameters:allAudioParams];
-    
-    [[self.player currentItem] setAudioMix:audioZeroMix];
-}
-
-- (void) changeToNextAudio
-{
-    AVURLAsset *asset = (AVURLAsset*)[[self.player currentItem] asset];
-    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-    
-    if (self.audioTrackNumber >= ([audioTracks count] -1))
-    {
-        self.audioTrackNumber = 0;
-    }
-    else
-    {
-        self.audioTrackNumber ++;
-    }
-    
-    [self.currentAudioLanguageLabel setText:[self.audioLanguages objectAtIndex:self.audioTrackNumber]];
-    
-    NSMutableArray *allAudioParams = [NSMutableArray array];
-    int i = 0;
-    for (AVAssetTrack *track in audioTracks)
-    {
-        AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-        float volume;
-        if (self.audioTrackNumber == i)
-        {
-            volume = 1.0;
-        }
-        else
-        {
-            volume = 0.0;
-        }
-        
-        [audioInputParams setVolume:volume atTime:kCMTimeZero];
-        [audioInputParams setTrackID:[track trackID]];
-        [allAudioParams addObject:audioInputParams];
-        i++;
-    }
-    AVMutableAudioMix *audioZeroMix = [AVMutableAudioMix audioMix];
-    [audioZeroMix setInputParameters:allAudioParams];
-    
-    [[self.player currentItem] setAudioMix:audioZeroMix];
-}
-
-- (void) changeToPrevAudio
-{
-    AVURLAsset *asset = (AVURLAsset*)[[self.player currentItem] asset];
-    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-    
-    if (audioTrackNumber <= 0)
-    {
-        self.audioTrackNumber = [audioTracks count] - 1;
-    }
-    else
-    {
-        self.audioTrackNumber --;
-    }
-    
-    [self.currentAudioLanguageLabel setText:[self.audioLanguages objectAtIndex:self.audioTrackNumber]];
-    
-    NSMutableArray *allAudioParams = [NSMutableArray array];
-    int i = 0;
-    for (AVAssetTrack *track in audioTracks)
-    {
-        AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-        float volume;
-        if (self.audioTrackNumber == i)
-        {
-            volume = 1.0;
-        }
-        else
-        {
-            volume = 0.0;
-        }
-        
-        [audioInputParams setVolume:volume atTime:kCMTimeZero];
-        [audioInputParams setTrackID:[track trackID]];
-        [allAudioParams addObject:audioInputParams];
-        i++;
-    }
-    AVMutableAudioMix *audioZeroMix = [AVMutableAudioMix audioMix];
-    [audioZeroMix setInputParameters:allAudioParams];
-    
-    [[self.player currentItem] setAudioMix:audioZeroMix];
-}
-*/
-
-
-- (IBAction)pause:(id)sender
-{
-	[self.mPlayer pause];
-
-    [self showPlayButton];
 }
 
 /* Display AVMetadataCommonKeyTitle and AVMetadataCommonKeyCopyrights metadata. */
@@ -709,35 +636,48 @@ float volume = 0.0;
 }
 
 - (void)viewDidLoad
-{    
-	[self setPlayer:nil];
+{
+    
+    self.audioTracks = [[NSMutableArray alloc] init];
+    // Add select track button
+    self.btnSelectLanguage = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.btnSelectLanguage.frame = CGRectMake(self.view.frame.size.width - 120, 5, 120, 30);
+    self.btnSelectLanguage.backgroundColor = [UIColor brownColor];
+    [self.btnSelectLanguage setTitle: @"Select Track" forState: UIControlStateNormal];
+    [self.btnSelectLanguage setTitle: @"Done" forState: UIControlStateSelected];
 
-    self.audioTracks = [[NSArray alloc] init];
-
-	UIView* view  = [self view];
-
-	UISwipeGestureRecognizer* swipeUpRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-	[swipeUpRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
-	[view addGestureRecognizer:swipeUpRecognizer];
-	
-	UISwipeGestureRecognizer* swipeDownRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-	[swipeDownRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
-	[view addGestureRecognizer:swipeDownRecognizer];
-
+    [self.btnSelectLanguage addTarget:self action:@selector(selectTrackButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.btnSelectLanguage];
+    self.navigationItem.rightBarButtonItem = rightBarButton;
+    
+    
+    [self setPlayer:nil];
+    
+    UIView* view  = [self view];
+    
+    UISwipeGestureRecognizer* swipeUpRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+    [swipeUpRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
+    [view addGestureRecognizer:swipeUpRecognizer];
+    
+    UISwipeGestureRecognizer* swipeDownRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+    [swipeDownRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
+    [view addGestureRecognizer:swipeDownRecognizer];
+    
     UIBarButtonItem *scrubberItem = [[UIBarButtonItem alloc] initWithCustomView:self.mScrubber];
     UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
     UIButton *infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
     [infoButton addTarget:self action:@selector(showMetadata:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *infoItem = [[UIBarButtonItem alloc] initWithCustomView:infoButton];
-
+    
     self.mToolbar.items = @[self.mPlayButton, flexItem, scrubberItem, infoItem];
-	isSeeking = NO;
-	[self initScrubberTimer];
-	
-	[self syncPlayPauseButtons];
-	[self syncScrubber];
-
+    isSeeking = NO;
+    [self initScrubberTimer];
+    
+    [self syncPlayPauseButtons];
+    [self syncScrubber];
+    
     [super viewDidLoad];
 }
 
@@ -747,6 +687,15 @@ float volume = 0.0;
 	
 	[super viewWillDisappear:animated];
 }
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.audioTracks removeAllObjects];
+    [self.selectedAudioTracks removeAllObjects];
+    self.selectedAudioOption = nil;
+}
+
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -1088,9 +1037,9 @@ float volume = 0.0;
                  its duration can be fetched from the item. */
                 
                 [self getAvailableAudioTracks];
-               // [self initScrubberTimer];
-                
-               // [self enableScrubber];
+                [self changeAudioTrack];
+                [self initScrubberTimer];
+                [self enableScrubber];
                 [self enablePlayerButtons];
             }
             break;

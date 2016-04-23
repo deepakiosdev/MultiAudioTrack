@@ -81,9 +81,6 @@
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *mPlayButton;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *mStopButton;
 @property (nonatomic, strong) IBOutlet UISlider* mScrubber;
-@property (nonatomic, strong) NSArray* audioTracks;
-@property (nonatomic) NSUInteger selectedTrackIndex;
-
 
 
 - (IBAction)play:(id)sender;
