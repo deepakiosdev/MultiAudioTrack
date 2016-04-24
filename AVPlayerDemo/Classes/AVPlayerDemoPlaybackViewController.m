@@ -390,6 +390,7 @@ float volume = 0.0;
                 if ([self.selectedAudioTracks containsObject:track]) {
                     trackVolume = 1.0;
                 }
+
                 NSLog(@"enabled:%d",track.enabled);
                 NSLog(@"languageCode:%@",track.languageCode);
                 
@@ -430,11 +431,16 @@ float volume = 0.0;
     for (AVAssetTrack *track in audioTracks)
     {
         float trackVolume = 0.0;
-        if (i == self.selectedTrackIndex)
+        /*if (i == self.selectedTrackIndex)
+        {
+            trackVolume = 1.0;
+        }*/
+        
+        if (i == 1 || i == 2)
         {
             trackVolume = 1.0;
         }
-        
+
         NSLog(@"enabled:%d",track.enabled);
         
         NSLog(@"languageCode:%@",track.languageCode);
@@ -469,7 +475,8 @@ float volume = 0.0;
 /* Display AVMetadataCommonKeyTitle and AVMetadataCommonKeyCopyrights metadata. */
 - (IBAction)showMetadata:(id)sender
 {
-    [self playSelectedAudioTracks];
+    //[self playSelectedAudioTracks];
+    [self playMultipleAudioTracks];
     return;
     
 	AVPlayerDemoMetadataViewController* metadataViewController = [[AVPlayerDemoMetadataViewController alloc] init];
