@@ -56,18 +56,20 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     cell.accessoryType  = UITableViewCellAccessoryCheckmark;
-    cell.textLabel.text = ((AVMediaSelectionOption*)[self.audioTracks objectAtIndex:indexPath.row]).displayName;
+    
+    id audioTrack = [self.audioTracks objectAtIndex:indexPath.row];
+    if ([audioTrack isKindOfClass:[AVAssetTrack class]]) {
+        cell.textLabel.text = [NSString stringWithFormat:@"Track %ld",((long)indexPath.row + 1)];
+
+    } else if ([audioTrack isKindOfClass:[AVMediaSelectionOption class]]){
+        cell.textLabel.text = ((AVMediaSelectionOption*)[self.audioTracks objectAtIndex:indexPath.row]).displayName;
+
+    }
+    
+    
     return cell;
 }
 
-/*
--(NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSIndexPath *oldIndex = [self.tableView indexPathForSelectedRow];
-    [self.tableView cellForRowAtIndexPath:oldIndex].accessoryType = UITableViewCellAccessoryNone;
-    [self.tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
-    return indexPath;
-}
-*/
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
