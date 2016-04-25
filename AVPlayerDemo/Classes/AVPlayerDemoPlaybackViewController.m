@@ -178,13 +178,20 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
 {
 	if (mURL != URL)
 	{
-		mURL = [URL copy];
-       // mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
+		  mURL = [URL copy];
+        //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
+        //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
+        //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
+        //mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
+       // mURL = [NSURL URLWithString:@"http://www.example.com/hls-vod/audio-only/video1.mp4.m3u8"];
+
+
+        //
  
         AVURLAsset *asset = [AVURLAsset URLAssetWithURL:mURL options:nil];
-        
-        NSArray *requestedKeys = @[@"playable"];
-        
+        //NSArray *requestedKeys = @[@"playable"];
+        NSArray *requestedKeys = @[@"playable", @"status"];
+
         /* Tells the asset to load the values of any of the specified keys that are not already loaded. */
         [asset loadValuesAsynchronouslyForKeys:requestedKeys completionHandler:
          ^{		 
@@ -225,13 +232,15 @@ float volume = 0.0;
 
 - (NSArray *)getAvailableAudioTracks
 {
+    NSLog(@"%s",__FUNCTION__);
+
     NSMutableArray *allAudioTracks = [NSMutableArray new];
-    AVAsset *asset = [[self.mPlayer currentItem] asset];
+    AVURLAsset *asset = (AVURLAsset *)[[self.mPlayer currentItem] asset];
 
     //** 1st Way
     AVMediaSelectionGroup *audioTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
     
-    NSLog(@"audio tracks 1 %@", audioTracks);
+    NSLog(@"audio tracks 1: %@", audioTracks);
     
     for (AVMediaSelectionOption *option in audioTracks.options)
     {
@@ -242,22 +251,22 @@ float volume = 0.0;
     
     //** 2nd way
     NSArray *audiTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-    NSLog(@"audio tracks 2 %@", audiTracks);
+    NSLog(@"audio tracks 2: %@", audiTracks);
 
     if(allAudioTracks.count == 0) {
        allAudioTracks = [NSMutableArray arrayWithArray:audiTracks];
     }
     ////////
-    NSLog(@"All Audio Track Array: %@", allAudioTracks);
+    NSLog(@"All Audio Tracks Array: %@", allAudioTracks);
     [self.audioTracks removeAllObjects];
     self.audioTracks = allAudioTracks;
-    [self getAllMediaCharacteristics];
     return allAudioTracks;
 }
 
 
 - (void)changeAudioTrackWithSelectedAudioOption:(AVMediaSelectionOption *)selectedAudioOption {
-    
+    NSLog(@"%s",__FUNCTION__);
+
     AVAsset *asset              = [[self.mPlayer currentItem] asset];
     AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
     [[self.mPlayer currentItem] selectMediaOption:selectedAudioOption inMediaSelectionGroup:audoTracks];
@@ -265,7 +274,7 @@ float volume = 0.0;
 
 - (void)getAllMediaCharacteristics {
     NSArray *tracks = [[self.player currentItem] tracks];
-    NSLog(@"All Media Tracks:%@", tracks);
+    NSLog(@"%s,\nAll Media Tracks:%@",__FUNCTION__, tracks);
     
     NSLog(@"\n\n\n\n=======================================\n\n\n\n");
 
@@ -285,6 +294,8 @@ float volume = 0.0;
 }
 
 - (AVMediaSelectionOption *)getSelectedAudioOption {
+    NSLog(@"%s",__FUNCTION__);
+
     AVAsset *asset = [[self.mPlayer currentItem] asset];
     AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
     AVMediaSelectionOption *selectedOption = [[self.mPlayer currentItem] selectedMediaOptionInMediaSelectionGroup:audoTracks];
@@ -293,7 +304,9 @@ float volume = 0.0;
     return selectedOption;
 }
 
-- (void)checkEnableAudioTracks {
+- (void)checkEnabledAudioTracks {
+    NSLog(@"%s",__FUNCTION__);
+
     AVURLAsset *asset = (AVURLAsset *)[[self.mPlayer currentItem] asset];
     NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
 
@@ -323,8 +336,8 @@ float volume = 0.0;
 
 }
 
-- (void)adjustVolume {
-    
+- (void)enableAllTracks {
+    NSLog(@"%s",__FUNCTION__);
     AVURLAsset *asset = (AVURLAsset *)[[self.mPlayer currentItem] asset];
     
     AVMutableComposition *composition = [AVMutableComposition composition];
@@ -365,7 +378,8 @@ float volume = 0.0;
 }
 
 - (void)playSelectedAudioTracks:(NSArray *)selectedAudioTracks {
-    
+    NSLog(@"%s",__FUNCTION__);
+
     if (selectedAudioTracks.count == 0 || self.audioTracks.count <2) {
         return;
     }
@@ -769,9 +783,6 @@ float volume = 0.0;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.audioTracks removeAllObjects];
-    [self.selectedAudioTracks removeAllObjects];
-    self.selectedAudioOption = nil;
 }
 
 
@@ -1112,8 +1123,16 @@ float volume = 0.0;
                 /* Once the AVPlayerItem becomes ready to play, i.e. 
                  [playerItem status] == AVPlayerItemStatusReadyToPlay,
                  its duration can be fetched from the item. */
-                //[self checkEnableAudioTracks];
-               // [self adjustVolume];
+                 self.selectedTrackIndex = nil;
+                [self.audioTracks removeAllObjects];
+                [self.selectedAudioTracks removeAllObjects];
+                
+                [self getAllMediaCharacteristics];
+                [self checkEnabledAudioTracks];
+                /*[self getAvailableAudioTracks];
+                [self enableAllTracks];
+                [self checkEnabledAudioTracks];*/
+
                 [self getAvailableAudioTracks];
                 [self playSelectedAudioTracks:self.selectedAudioTracks];
                 [self initScrubberTimer];
