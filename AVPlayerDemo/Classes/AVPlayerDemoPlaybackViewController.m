@@ -120,6 +120,7 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
     // on iPhone, this will be an action sheet
     contentVC.modalPresentationStyle = UIModalPresentationPopover;
     contentVC.audioTracks = [[NSArray alloc] initWithArray:self.audioTracks];
+    //contentVC.audioTracks = [self getAvailableAudioTracks];
     contentVC.popoverPresentationController.sourceRect = self.btnSelectLanguage.frame; // 15
     contentVC.popoverPresentationController.sourceView = self.view; // 16
     
@@ -155,7 +156,7 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
         NSLog(@"Track:%@",[popViewController.audioTracks objectAtIndex:indexPath.row]);
         [self.selectedAudioTracks addObject:[popViewController.audioTracks objectAtIndex:indexPath.row]];
     }
-    [self playSelectedAudioTracks];
+    [self playSelectedAudioTracks:self.selectedAudioTracks];
     return YES;
 }
 
@@ -224,6 +225,7 @@ float volume = 0.0;
 
 - (NSArray *)getAvailableAudioTracks
 {
+    NSMutableArray *allAudioTracks = [NSMutableArray new];
     AVAsset *asset = [[self.mPlayer currentItem] asset];
 
     //** 1st Way
@@ -231,37 +233,34 @@ float volume = 0.0;
     
     NSLog(@"audio tracks 1 %@", audioTracks);
     
-    [self.audioTracks removeAllObjects];
-    
     for (AVMediaSelectionOption *option in audioTracks.options)
     {
 
         NSLog(@"Audio Track Display Name: %@", option.displayName);
-        [self.audioTracks addObject:option];
+        [allAudioTracks addObject:option];
     }
     
     //** 2nd way
     NSArray *audiTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
     NSLog(@"audio tracks 2 %@", audiTracks);
 
-    if(self.audioTracks.count == 0) {
-        self.audioTracks = [NSMutableArray arrayWithArray:audiTracks];
+    if(allAudioTracks.count == 0) {
+       allAudioTracks = [NSMutableArray arrayWithArray:audiTracks];
     }
     ////////
-    NSLog(@"All Audio Track Array: %@", self.audioTracks);
+    NSLog(@"All Audio Track Array: %@", allAudioTracks);
+    [self.audioTracks removeAllObjects];
+    self.audioTracks = allAudioTracks;
     [self getAllMediaCharacteristics];
-    return self.audioTracks;
+    return allAudioTracks;
 }
 
 
-- (void)changeAudioTrack {
+- (void)changeAudioTrackWithSelectedAudioOption:(AVMediaSelectionOption *)selectedAudioOption {
     
-    if (self.selectedAudioTracks.count) {
-        self.selectedAudioOption    = [self.selectedAudioTracks objectAtIndex:0];
-        AVAsset *asset              = [[self.mPlayer currentItem] asset];
-        AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
-        [[self.mPlayer currentItem] selectMediaOption:self.selectedAudioOption inMediaSelectionGroup:audoTracks];
-    }
+    AVAsset *asset              = [[self.mPlayer currentItem] asset];
+    AVMediaSelectionGroup *audoTracks = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+    [[self.mPlayer currentItem] selectMediaOption:selectedAudioOption inMediaSelectionGroup:audoTracks];
 }
 
 - (void)getAllMediaCharacteristics {
@@ -365,16 +364,16 @@ float volume = 0.0;
     [self showPlayButton];
 }
 
-- (void)playSelectedAudioTracks {
+- (void)playSelectedAudioTracks:(NSArray *)selectedAudioTracks {
     
-    if (self.selectedAudioTracks.count == 0 || self.audioTracks.count <2) {
+    if (selectedAudioTracks.count == 0 || self.audioTracks.count <2) {
         return;
     }
     
-    for (id audioTrack in self.selectedAudioTracks) {
+    for (id audioTrack in selectedAudioTracks) {
         
         if ([audioTrack isKindOfClass:[AVMediaSelectionOption class]]) {
-            [self changeAudioTrack];
+            [self changeAudioTrackWithSelectedAudioOption: audioTrack];
             
         } else if ([audioTrack isKindOfClass:[AVAssetTrack class]]) {
             
@@ -387,12 +386,12 @@ float volume = 0.0;
             {
                 float trackVolume = 0.0;
                 
-                if ([self.selectedAudioTracks containsObject:track]) {
+                if ([selectedAudioTracks containsObject:track]) {
                     trackVolume = 1.0;
                 }
 
                 NSLog(@"enabled:%d",track.enabled);
-                NSLog(@"languageCode:%@",track.languageCode);
+               // NSLog(@"languageCode:%@",track.languageCode);
                 
                 AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
                 
@@ -1113,10 +1112,10 @@ float volume = 0.0;
                 /* Once the AVPlayerItem becomes ready to play, i.e. 
                  [playerItem status] == AVPlayerItemStatusReadyToPlay,
                  its duration can be fetched from the item. */
-                [self checkEnableAudioTracks];
+                //[self checkEnableAudioTracks];
                // [self adjustVolume];
                 [self getAvailableAudioTracks];
-                [self playSelectedAudioTracks];
+                [self playSelectedAudioTracks:self.selectedAudioTracks];
                 [self initScrubberTimer];
                 [self enableScrubber];
                 [self enablePlayerButtons];
