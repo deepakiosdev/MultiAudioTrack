@@ -59,6 +59,7 @@
 @property (nonatomic, strong) NSMutableArray* audioTracks;
 @property (nonatomic, strong) NSMutableArray* selectedAudioTracks;
 @property (nonatomic, strong) AVMediaSelectionOption* selectedAudioOption;
+@property (nonatomic) float lastBitRate;
 
 
 @property (nonatomic) NSUInteger selectedTrackIndex;
@@ -182,7 +183,7 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
         //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
         //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
         //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
-        //mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
+         mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
        // mURL = [NSURL URLWithString:@"http://www.example.com/hls-vod/audio-only/video1.mp4.m3u8"];
 
 
@@ -228,6 +229,30 @@ float volume = 0.0;
 	}
 	[self.mPlayer play];
     [self showStopButton];
+}
+
+
+- (void)getBitRateFromAVPlayerItem:(AVPlayerItem *)playerItem {
+    
+    AVPlayerItemAccessLog *accessLog = [playerItem accessLog];
+
+    for (AVPlayerItemAccessLogEvent* event in accessLog.events) {
+        NSLog(@"event:%@",event);
+        NSLog(@"indicatedBitrate:%f",event.indicatedBitrate);
+    }
+    
+   
+}
+
+- (void)handleAVPlayerAccess:(NSNotification *)notif {
+    AVPlayerItemAccessLog *accessLog = [((AVPlayerItem *)notif.object) accessLog];
+    AVPlayerItemAccessLogEvent *lastEvent = accessLog.events.lastObject;
+    float lastEventNumber = lastEvent.indicatedBitrate;
+    if (lastEventNumber != self.lastBitRate) {
+        //Here is where you can increment a variable to keep track of the number of times you switch your bit rate.
+        NSLog(@"Switch indicatedBitrate from: %f to: %f", self.lastBitRate, lastEventNumber);
+        self.lastBitRate = lastEventNumber;
+    }
 }
 
 - (NSArray *)getAvailableAudioTracks
@@ -770,6 +795,10 @@ float volume = 0.0;
     [self syncPlayPauseButtons];
     [self syncScrubber];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleAVPlayerAccess:)
+                                                 name:AVPlayerItemNewAccessLogEntryNotification
+                                               object:nil];
     [super viewDidLoad];
 }
 
@@ -1129,6 +1158,8 @@ float volume = 0.0;
                 
                 [self getAllMediaCharacteristics];
                 [self checkEnabledAudioTracks];
+                
+                [self getBitRateFromAVPlayerItem:self.mPlayer.currentItem];
                 /*[self getAvailableAudioTracks];
                 [self enableAllTracks];
                 [self checkEnabledAudioTracks];*/
