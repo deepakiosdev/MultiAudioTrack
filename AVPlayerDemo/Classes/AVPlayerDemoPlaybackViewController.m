@@ -123,6 +123,8 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
     contentVC.audioTracks = [[NSArray alloc] initWithArray:self.audioTracks];
     //contentVC.audioTracks = [self getAvailableAudioTracks];
     contentVC.popoverPresentationController.sourceRect = self.btnSelectLanguage.frame; // 15
+    //contentVC.popoverPresentationController.sourceRect = CGRectMake(300, 400, 20, 20); // 15
+
     contentVC.popoverPresentationController.sourceView = self.view; // 16
     
     // configure the Popover presentation controller
@@ -183,7 +185,7 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
         //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
         //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
         //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
-         mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
+        // mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
        // mURL = [NSURL URLWithString:@"http://www.example.com/hls-vod/audio-only/video1.mp4.m3u8"];
 
 
@@ -229,6 +231,9 @@ float volume = 0.0;
 	}
 	[self.mPlayer play];
     [self showStopButton];
+    
+    self.mPlayer.currentItem.preferredPeakBitRate = 4454545454545;
+    
 }
 
 
@@ -238,7 +243,7 @@ float volume = 0.0;
 
     for (AVPlayerItemAccessLogEvent* event in accessLog.events) {
         NSLog(@"event:%@",event);
-        NSLog(@"indicatedBitrate:%f",event.indicatedBitrate);
+        NSLog(@"1========indicatedBitrate:%f",event.indicatedBitrate);
     }
     
    
@@ -280,6 +285,13 @@ float volume = 0.0;
 
     if(allAudioTracks.count == 0) {
        allAudioTracks = [NSMutableArray arrayWithArray:audiTracks];
+        
+        
+        for (AVAssetTrack *track in allAudioTracks)
+        {
+            [self getFullLangugaeNameFromLanguageCode:track.languageCode];
+        }
+
     }
     ////////
     NSLog(@"All Audio Tracks Array: %@", allAudioTracks);
@@ -288,6 +300,22 @@ float volume = 0.0;
     return allAudioTracks;
 }
 
+- (NSString *)getFullLangugaeNameFromLanguageCode:(NSString *)languageCode {
+    
+    NSLog(@"languageCode:%@",languageCode);
+    NSString *displayName = @"";
+    if ([languageCode isEqualToString:@"und"]) {
+        return displayName;
+    }
+    NSLocale *englishLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en"];
+    displayName             = [[englishLocale
+                              displayNameForKey:NSLocaleLanguageCode
+                              value:languageCode
+                              ] capitalizedString];
+    NSLog(@"displayName:%@",displayName);
+    
+    return displayName;
+}
 
 - (void)changeAudioTrackWithSelectedAudioOption:(AVMediaSelectionOption *)selectedAudioOption {
     NSLog(@"%s",__FUNCTION__);
@@ -430,10 +458,15 @@ float volume = 0.0;
                 }
 
                 NSLog(@"enabled:%d",track.enabled);
-               // NSLog(@"languageCode:%@",track.languageCode);
-                
+                NSLog(@"languageCode:%@",track.languageCode);
+                NSLocale *englishLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en"];
+               NSString *displayName = [[englishLocale
+                                displayNameForKey:NSLocaleLanguageCode
+                                value:track.languageCode
+                                ] capitalizedString];
                 AVMutableAudioMixInputParameters *audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-                
+                NSLog(@"displayName:%@",displayName);
+
                 
                 [audioInputParams setVolume:trackVolume atTime:kCMTimeZero];
                 [audioInputParams setTrackID:[track trackID]];
