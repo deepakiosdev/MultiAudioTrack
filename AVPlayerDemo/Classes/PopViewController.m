@@ -64,6 +64,10 @@
     } else if ([audioTrack isKindOfClass:[AVMediaSelectionOption class]]){
         cell.textLabel.text = ((AVMediaSelectionOption*)[self.audioTracks objectAtIndex:indexPath.row]).displayName;
 
+    } else {
+        double bitrate = ((NSNumber *)audioTrack).doubleValue;
+
+        cell.textLabel.text = [NSString stringWithFormat:@"%f",bitrate];
     }
     
     

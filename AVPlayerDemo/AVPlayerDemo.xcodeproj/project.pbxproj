@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0038F2801CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */; };
 		00E4E4EF1CCB65E400E695B0 /* PopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E4E4ED1CCB65E400E695B0 /* PopViewController.m */; };
 		00E4E4F01CCB65E400E695B0 /* PopViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -54,6 +55,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bipbop_16x9_variant(1).m3u8"; sourceTree = "<group>"; };
 		00E4E4EC1CCB65E400E695B0 /* PopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopViewController.h; sourceTree = "<group>"; };
 		00E4E4ED1CCB65E400E695B0 /* PopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopViewController.m; sourceTree = "<group>"; };
 		00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PopViewController.xib; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -323,6 +326,7 @@
 			files = (
 				AFFB6C33133C5AF500530D6D /* iTunesArtwork in Resources */,
 				AFFB6C34133C5AF500530D6D /* Placeholder.png in Resources */,
+				0038F2801CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 in Resources */,
 				AFFB6C35133C5AF500530D6D /* Icon@2x.png in Resources */,
 				AFFB6C36133C5AF500530D6D /* Icon.png in Resources */,
 				AFFB6C37133C5AF500530D6D /* Icon-Small@2x.png in Resources */,
