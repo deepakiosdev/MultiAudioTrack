@@ -65,6 +65,7 @@
 @property (nonatomic, assign) BOOL isBitrateSwitching;
 @property (strong) AVPlayerItem* playerItem;
 @property (nonatomic, strong) M3u8Media *selectedBitrate;
+@property (nonatomic) CMTime lastTime;
 
 
 @property (nonatomic) NSUInteger selectedTrackIndex;
@@ -197,15 +198,16 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
         //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
         //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
         //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
-         mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
+        // mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
        // mURL = [NSURL URLWithString:@"http://www.example.com/hls-vod/audio-only/video1.mp4.m3u8"];
+        mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/gear2/prog_index.m3u8"];
 
 
         //
  
         AVURLAsset *asset = [AVURLAsset URLAssetWithURL:mURL options:nil];
         //NSArray *requestedKeys = @[@"playable"];
-        NSArray *requestedKeys = @[@"playable", @"status"];
+        NSArray *requestedKeys = @[@"playable"];
 
         /* Tells the asset to load the values of any of the specified keys that are not already loaded. */
         [asset loadValuesAsynchronouslyForKeys:requestedKeys completionHandler:
@@ -218,6 +220,32 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
          }];
 	}
 }
+
+- (void)switchToNextURL:(NSURL*)URL
+{
+    URL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/gear4/prog_index.m3u8"];
+
+    self.lastTime = self.player.currentItem.currentTime;
+    if (mURL != URL)
+    {
+        mURL = [URL copy];
+        
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:mURL options:nil];
+        //NSArray *requestedKeys = @[@"playable"];
+        NSArray *requestedKeys = @[@"playable"];
+        
+        /* Tells the asset to load the values of any of the specified keys that are not already loaded. */
+        [asset loadValuesAsynchronouslyForKeys:requestedKeys completionHandler:
+         ^{
+             dispatch_async( dispatch_get_main_queue(),
+                            ^{
+                                /* IMPORTANT: Must dispatch to main queue in order to operate on the AVPlayer and AVPlayerItem. */
+                                [self prepareToPlayAsset:asset withKeys:requestedKeys];
+                            });
+         }];
+    }
+}
+
 
 - (NSURL*)URL
 {
@@ -817,7 +845,8 @@ float volume = 0.0;
 {
     //[self playSelectedAudioTracks];
     //[self playMultipleAudioTracks];
-    [self switchToSelectedBitrate:self.bandwidthArray[0]];
+    [self switchToNextURL:nil];
+    //[self switchToSelectedBitrate:self.bandwidthArray[0]];
     return;
     
 	AVPlayerDemoMetadataViewController* metadataViewController = [[AVPlayerDemoMetadataViewController alloc] init];
@@ -1400,8 +1429,9 @@ float volume = 0.0;
         
         [self syncPlayPauseButtons];
     }
-	
-    [self.mScrubber setValue:0.0];
+    if (CMTIME_IS_INVALID(self.lastTime)) {
+        [self.mScrubber setValue:0.0];
+    }
     
     
     
@@ -1457,6 +1487,20 @@ float volume = 0.0;
                  [playerItem status] == AVPlayerItemStatusReadyToPlay,
                  its duration can be fetched from the item. */
                // self.bandwidthArray = [self parseM3u8:nil];
+                
+                if (CMTIME_IS_VALID(self.lastTime)) {
+                    [self seekToCMTime:self.lastTime completionHandler:^(BOOL success) {
+                        NSLog(@"After selection preferredPeakBitRate:%f, indicatedBitrate:%f",self.player.currentItem.preferredPeakBitRate, self.player.currentItem.accessLog.events.lastObject.indicatedBitrate);
+                        NSLog(@"3=====Current URL:%@",[((AVURLAsset *)self.player.currentItem.asset) URL]);
+                        self.lastTime = kCMTimeInvalid;
+                        
+                    }];
+                }
+                
+                AVURLAsset *asset = (AVURLAsset *)[[self.mPlayer currentItem] asset];
+
+                NSLog(@"URL---%@",asset.URL);
+                
                 self.bandwidthArray = [self getBandwidthsFromM3u8:@""];
 
                 NSLog(@"parseM3u8:%@",self.bandwidthArray);
