@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483278242.908845"
+            timestampString = "484065279.940257"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1159"
-            endingLineNumber = "1159"
-            landmarkName = "-observeValueForKeyPath:ofObject:change:context:"
+            startingLineNumber = "1283"
+            endingLineNumber = "1283"
+            landmarkName = "-assetFailedToPrepareForPlayback:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -36,13 +36,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483268887.297294"
+            timestampString = "484065279.940257"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "299"
-            endingLineNumber = "299"
-            landmarkName = "-getSelectedAudioOption"
-            landmarkType = "5">
+            startingLineNumber = "1228"
+            endingLineNumber = "1228"
+            landmarkName = "@implementation AVPlayerDemoPlaybackViewController(Player)"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -52,12 +52,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483268887.297294"
+            timestampString = "484065279.940257"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "293"
-            endingLineNumber = "293"
-            landmarkName = "-getAllMediaCharacteristics"
+            startingLineNumber = "1100"
+            endingLineNumber = "1100"
+            landmarkName = "-viewDidLoad"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -68,44 +68,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483268887.297294"
+            timestampString = "484065246.878514"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
-            landmarkName = "-getAvailableAudioTracks"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483276798.855437"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1104"
-            endingLineNumber = "1104"
-            landmarkName = "-observeValueForKeyPath:ofObject:change:context:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483276798.855437"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "976"
-            endingLineNumber = "976"
-            landmarkName = "-prepareToPlayAsset:withKeys:"
+            startingLineNumber = "286"
+            endingLineNumber = "286"
+            landmarkName = "-switchToSelectedBitrate:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -116,12 +84,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
-            timestampString = "483280298.238055"
+            timestampString = "484065333.374638"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "243"
-            endingLineNumber = "243"
-            landmarkName = "-getAvailableAudioTracks"
+            startingLineNumber = "284"
+            endingLineNumber = "284"
+            landmarkName = "-switchToSelectedBitrate:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
+            timestampString = "484065395.590511"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "307"
+            endingLineNumber = "307"
+            landmarkName = "-switchToSelectedBitrate:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Classes/AVPlayerDemoPlaybackViewController.m"
+            timestampString = "484065398.150553"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
+            landmarkName = "-switchToSelectedBitrate:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

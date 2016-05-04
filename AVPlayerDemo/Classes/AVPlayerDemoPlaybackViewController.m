@@ -50,6 +50,7 @@
 #import "AVPlayerDemoPlaybackView.h"
 #import "AVPlayerDemoMetadataViewController.h"
 #import "PopViewController.h"
+#import "M3u8Media.h"
 
 @interface AVPlayerDemoPlaybackViewController  () <UIPopoverPresentationControllerDelegate>
 {
@@ -61,6 +62,9 @@
 @property (nonatomic, strong) AVMediaSelectionOption* selectedAudioOption;
 @property (nonatomic) float lastBitRate;
 @property (nonatomic, strong) NSArray *bandwidthArray;
+@property (nonatomic, assign) BOOL isBitrateSwitching;
+@property (strong) AVPlayerItem* playerItem;
+@property (nonatomic, strong) M3u8Media *selectedBitrate;
 
 
 @property (nonatomic) NSUInteger selectedTrackIndex;
@@ -243,82 +247,201 @@ float volume = 0.0;
   // self.mPlayer.currentItem.preferredPeakBitRate = 4454545454545;
 }
 
-/*
- NSString *m3u8URL   =  [self getM3u8Url:urlString];
- [CMRestInterface asyncDataDownload:m3u8URL withProgressHandler:nil andCompletionHandler:^(NSData *m3u8Data, NSUInteger errorCode)
- {
- if(errorCode == TRACE_CODE_SUCCESS)
- {
- NSString *m3u8String    = [[NSString alloc] initWithData:m3u8Data encoding:NSUTF8StringEncoding];
- NSString *m3u8          = [CMUtilities parseM3u8:m3u8String];
- m3u8                    = [m3u8 stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
- */
+- (CMTime)getCurrentTime {
+    return [self.player.currentItem currentTime];
+}
 
-#pragma mark- M3u8 parsing and checking master
-
-/*
--(void)parseMasterPlaylist {
-    
-    self.xStreamList = [[M3U8ExtXStreamInfList alloc] init];
-    self.xMediaList = [[M3U8ExtXMediaList alloc] init];
-    
-    NSRange crRange = [self.originalText rangeOfString:@"\n"];
-    NSString *remainingPart = self.originalText;
-    
-    while (NSNotFound != crRange.location) {
-        
-        NSString *line = [remainingPart substringWithRange:NSMakeRange(0, crRange.location)];
-        remainingPart = [remainingPart substringFromIndex:crRange.location +1];
-        crRange = [remainingPart rangeOfString:@"\n"];
-        
-        // #EXT-X-VERSION:4
-        if ([line hasPrefix:M3U8_EXT_X_VERSION]) {
-            NSRange r_version = [line rangeOfString:M3U8_EXT_X_VERSION];
-            self.version = [line substringFromIndex:r_version.location + r_version.length];
-        }
-        
-        // #EXT-X-STREAM-INF:AUDIO="600k",BANDWIDTH=915685,PROGRAM-ID=1,CODECS="avc1.42c01e,mp4a.40.2",RESOLUTION=640x360,SUBTITLES="subs"
-        // http://hls.ted.com/talks/769/video/600k.m3u8?sponsor=Ripple
-        else if ([line hasPrefix:M3U8_EXT_X_STREAM_INF]) {
-            NSRange range = [line rangeOfString:M3U8_EXT_X_STREAM_INF];
-            NSString *attribute_list = [line substringFromIndex:range.location + range.length];
-            NSMutableDictionary *attr = [self attributesFromString:attribute_list];
-            
-            // parse URI
-            NSString *nextLine = [remainingPart substringToIndex:crRange.location]; // the URI
-            attr[@"URI"] = nextLine;
-            if (self.baseURL) {
-                attr[M3U8_BASE_URL] = self.baseURL;
-            }
-            
-            remainingPart = [remainingPart substringFromIndex:crRange.location +1];
-            crRange = [remainingPart rangeOfString:@"\n"];
-            
-            M3U8ExtXStreamInf *xStreamInf = [[M3U8ExtXStreamInf alloc] initWithDictionary:attr];
-            [self.xStreamList addExtXStreamInf:xStreamInf];
-        }
-        
-        
-        // 简单地忽略掉下面这个Tag
-        // #EXT-X-I-FRAME-STREAM-INF:BANDWIDTH=65531,PROGRAM-ID=1,CODECS="avc1.42c00c",RESOLUTION=320x180,URI="/talks/769/video/64k_iframe.m3u8?sponsor=Ripple"
-        else if ([line hasPrefix:M3U8_EXT_X_I_FRAME_STREAM_INF]) {
-            
-            
-        }
-        
-        // #EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="600k",LANGUAGE="eng",NAME="Audio",AUTOSELECT=YES,DEFAULT=YES,URI="/talks/769/audio/600k.m3u8?sponsor=Ripple",BANDWIDTH=614400
-        else if ([line hasPrefix:M3U8_EXT_X_MEDIA]) {
-            NSRange range = [line rangeOfString:M3U8_EXT_X_MEDIA];
-            NSString *attribute_list = [line substringFromIndex:range.location + range.length];
-            NSMutableDictionary *attr = [self attributesFromString:attribute_list];
-            if (self.baseURL.length > 0) {
-                attr[M3U8_BASE_URL] = self.baseURL;
-            }
-            M3U8ExtXMedia *media = [[M3U8ExtXMedia alloc] initWithDictionary:attr];
-            [self.xMediaList addExtXMedia:media];
+-(void)seekToCMTime:(CMTime)seekTime completionHandler:(void (^)(BOOL success))completionHandler
+{
+    if(!CMTIME_IS_VALID(seekTime))
+    {
+        if(completionHandler) {
+            completionHandler(YES);
         }
     }
-}*/
+    else
+    {
+        [self.player seekToTime:seekTime toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished)
+         {
+             if(completionHandler) {
+                 completionHandler(finished);
+             }
+         }];
+    }
+}
+/**
+ * Set selected bitrate.
+ */
+
+#pragma mark - AVAssetResourceLoader delegate methods
+- (BOOL) resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    return YES;
+}
+
+- (void)switchToSelectedBitrate:(M3u8Media *)m3u8Media {
+    
+    NSLog(@"Current preferredPeakBitRate:%f, selected bitrate:%f",self.player.currentItem.preferredPeakBitRate, m3u8Media.bitrate);
+    NSLog(@"Current indicatedBitrate:%f",self.player.currentItem.accessLog.events.lastObject.indicatedBitrate);
+    
+    if (m3u8Media != nil && self.selectedBitrate != m3u8Media) {
+        self.selectedBitrate    = m3u8Media;
+        self.isBitrateSwitching = YES;
+        [self.player pause];
+        NSURL *url = [NSURL URLWithString:[self.selectedBitrate.playlistUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        
+     NSLog(@"queue player URLS %@", url);
+        
+        NSMutableDictionary * headers = [NSMutableDictionary dictionary];
+        [headers setObject:@"iPad" forKey:@"User-Agent"];
+        
+        AVURLAsset *asset           = [AVURLAsset URLAssetWithURL:url options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
+        
+        AVAssetResourceLoader *resourceLoader = asset.resourceLoader;
+        //[resourceLoader setDelegate:self queue:dispatch_queue_create("CMQueuePlayerAsset loader", nil)];
+        [resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
+        //AVPlayerItem *playerItem    = [[AVPlayerItem alloc] initWithAsset:asset];
+        self.playerItem    = [[AVPlayerItem alloc] initWithAsset:asset];
+        
+        
+        if (self.isBitrateSwitching && self.playerItem && self.player.currentItem != self.playerItem)
+        {
+            
+            dispatch_async(dispatch_get_main_queue(), ^
+                           {
+                               CMTime time = [self getCurrentTime];
+                               [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
+                               NSLog(@"2=====Current URL:%@",[((AVURLAsset *)self.player.currentItem.asset) URL]);
+                               
+                               [self seekToCMTime:time completionHandler:^(BOOL success) {
+                                   NSLog(@"After selection preferredPeakBitRate:%f, indicatedBitrate:%f",self.player.currentItem.preferredPeakBitRate, self.player.currentItem.accessLog.events.lastObject.indicatedBitrate);
+                                   NSLog(@"3=====Current URL:%@",[((AVURLAsset *)self.player.currentItem.asset) URL]);
+                                   
+                               }];
+                               self.isBitrateSwitching = NO;
+                           });
+        }
+        
+        
+        //         AVURLAsset *asset = [AVURLAsset URLAssetWithURL:mURL options:nil];
+        //         //NSArray *requestedKeys = @[@"playable"];
+        //         NSArray *requestedKeys = @[@"playable", @"status"];
+        //
+        //         // Tells the asset to load the values of any of the specified keys that are not already loaded.
+        //        [asset loadValuesAsynchronouslyForKeys:requestedKeys completionHandler:
+        //         ^{
+        //             dispatch_async( dispatch_get_main_queue(),
+        //                            ^{
+        //                                // IMPORTANT: Must dispatch to main queue in order to operate on the AVPlayer and AVPlayerItem.
+        //                                [self prepareToPlayAsset:asset withKeys:requestedKeys];
+        //                            });
+        //         }];
+        
+        
+        
+        
+        /* Make our new AVPlayerItem the AVPlayer's current item. */
+        //        if (self.player.currentItem != self.playerItem)
+        //        {
+        //
+        //            /* Replace the player item with a new player item. The item replacement occurs
+        //             asynchronously; observe the currentItem property to find out when the
+        //             replacement will/did occur
+        //
+        //             If needed, configure player item here (example: adding outputs, setting text style rules,
+        //             selecting media options) before associating it with a player
+        //             */
+        //
+        //            CMTime time = [self getCurrentTime];
+        //            dispatch_async(dispatch_get_main_queue(), ^
+        //                           {
+        //                               [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
+        //                               DLog(@"2=====Current URL:%@",[((AVURLAsset *)self.player.currentItem.asset) URL]);
+        //
+        //                               [self seekToCMTime:time completionHandler:^(BOOL success) {
+        //                                   DLog(@"After selection preferredPeakBitRate:%f, indicatedBitrate:%f",self.player.currentItem.preferredPeakBitRate, self.player.currentItem.accessLog.events.lastObject.indicatedBitrate);
+        //                                   DLog(@"3=====Current URL:%@",[((AVURLAsset *)self.player.currentItem.asset) URL]);
+        //
+        //                               }];
+        //                           });
+        //        }
+        
+        /*self.selectedBitrate = newBitrate;
+         if (newBitrate != nil && self.player.currentItem.preferredPeakBitRate != newBitrate.bitrate) {
+         self.player.currentItem.preferredPeakBitRate = newBitrate.bitrate;
+         DLog(@"After selecttion preferredPeakBitRate:%f",self.player.currentItem.preferredPeakBitRate);
+         }*/
+        
+    }
+}
+
+
+/**
+ * Parse bandwidths from master .m3u8 file and return sorted array of bandwidths in Asse
+ */
+-(NSArray*)getBandwidthsFromM3u8:(NSString*)m3u8String
+{
+//    if ([m3u8String isEqualToString:@""] || [m3u8String isEqual:nil]) {
+//        return nil;
+//    }
+    
+    //m3u8String = @"http://nmstream2.clearhub.tv/nmdcPFTDemo/20150328/a27b07b0-a7de-4e4a-b84e-70567fb1738b/sec-hls/a27b07b0-a7de-4e4a-b84e-70567fb1738b.m3u8";
+//    NSString *fileName = @"bipbop_16x9_variant(1)";
+    NSString *fileName = @"test";
+
+    NSString* path = [[NSBundle mainBundle] pathForResource:fileName
+                                                     ofType:@"m3u8"];
+    
+    //Then loading the content into a NSString is even easier.
+    
+    m3u8String = [NSString stringWithContentsOfFile:path
+                                           encoding:NSUTF8StringEncoding
+                                              error:NULL];
+    
+    NSMutableArray *bandwidths = [NSMutableArray new];
+    NSArray *m3u8Playlist = [m3u8String componentsSeparatedByString:@"\n"];
+    
+    if([m3u8String rangeOfString:@"BANDWIDTH="].location != NSNotFound)
+    {
+        NSMutableArray *bandwidthStrings = [[NSMutableArray alloc] init];
+        int index = 1;
+        for (NSString *streamString in m3u8Playlist)
+        {
+            if([streamString rangeOfString:@"BANDWIDTH="].location != NSNotFound)
+            {
+                [bandwidthStrings addObject:streamString];
+                
+                NSRange bandwidthRange = [streamString rangeOfString:@"BANDWIDTH="];
+                NSString *bandwidthString = [streamString substringFromIndex:bandwidthRange.location + bandwidthRange.length];
+                NSString *value;
+                NSRange commaRange = [bandwidthString rangeOfString:@","];
+                if (NSNotFound == commaRange.location) {
+                    value = bandwidthString;
+                } else {
+                    value = [bandwidthString substringToIndex:commaRange.location];
+                }
+                NSString *playlistURL = m3u8Playlist[index];
+                if (playlistURL) {
+                    M3u8Media *media    = [M3u8Media new];
+                    media.bitrate       = value.doubleValue;
+                    media.playlistUrl   = playlistURL;
+                    [bandwidths addObject:media];
+                }
+            }
+            ++index;
+        }
+        
+        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"bitrate"  ascending:YES];
+        NSArray *sortedArray = [bandwidths sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+        //DLog(@"Bandwidths Array:%@",sortedArray);
+        for (M3u8Media *media in sortedArray) {
+        NSLog(@"Sorted bitrate:%f, playlistUrl:%@",media.bitrate, media.playlistUrl);
+        }
+        return sortedArray;
+    }
+    return nil;
+}
+
 
 -(NSArray*)parseM3u8:(NSString*)m3u8String
 {
@@ -693,7 +816,8 @@ float volume = 0.0;
 - (IBAction)showMetadata:(id)sender
 {
     //[self playSelectedAudioTracks];
-    [self playMultipleAudioTracks];
+    //[self playMultipleAudioTracks];
+    [self switchToSelectedBitrate:self.bandwidthArray[0]];
     return;
     
 	AVPlayerDemoMetadataViewController* metadataViewController = [[AVPlayerDemoMetadataViewController alloc] init];
@@ -1332,7 +1456,9 @@ float volume = 0.0;
                 /* Once the AVPlayerItem becomes ready to play, i.e. 
                  [playerItem status] == AVPlayerItemStatusReadyToPlay,
                  its duration can be fetched from the item. */
-                self.bandwidthArray = [self parseM3u8:nil];
+               // self.bandwidthArray = [self parseM3u8:nil];
+                self.bandwidthArray = [self getBandwidthsFromM3u8:@""];
+
                 NSLog(@"parseM3u8:%@",self.bandwidthArray);
 
                  self.selectedTrackIndex = nil;

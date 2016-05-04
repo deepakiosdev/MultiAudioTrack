@@ -1,0 +1,9 @@
+#EXTM3U
+#EXT-X-STREAM-INF: PROGRAM-ID=1,BANDWIDTH=331776
+http://nmstream2.clearhub.tv/nmdcPFTDemo/20150328/a27b07b0-a7de-4e4a-b84e-70567fb1738b/sec-hls/324/DowntonAbbey_324k.m3u8
+#EXT-X-STREAM-INF: PROGRAM-ID=1,BANDWIDTH=510976
+http://nmstream2.clearhub.tv/nmdcPFTDemo/20150328/a27b07b0-a7de-4e4a-b84e-70567fb1738b/sec-hls/499/DowntonAbbey_499k.m3u8
+#EXT-X-STREAM-INF: PROGRAM-ID=1,BANDWIDTH=1108992
+http://nmstream2.clearhub.tv/nmdcPFTDemo/20150328/a27b07b0-a7de-4e4a-b84e-70567fb1738b/sec-hls/1083/DowntonAbbey_1083k.m3u8
+#EXT-X-STREAM-INF: PROGRAM-ID=1,BANDWIDTH=1708032
+http://nmstream2.clearhub.tv/nmdcPFTDemo/20150328/a27b07b0-a7de-4e4a-b84e-70567fb1738b/sec-hls/1668/DowntonAbbey_1668k.m3u8

@@ -25,6 +25,8 @@
 		83CFBB2711ABFB6800A337F0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CFBB2611ABFB6800A337F0 /* QuartzCore.framework */; };
 		83CFBB3511AC00AD00A337F0 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CFBB3411AC00AD00A337F0 /* MobileCoreServices.framework */; };
 		84C18D42172F40C900E0F687 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84C18D41172F40C900E0F687 /* Default-568h@2x.png */; };
+		9E3F5AC41CDA3B8D00492661 /* M3u8Media.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E3F5AC31CDA3B8D00492661 /* M3u8Media.m */; };
+		9E3F5AC61CDA3CA800492661 /* test.m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 9E3F5AC51CDA3CA800492661 /* test.m3u8 */; };
 		9E4D8BAE1CC9EEF2008F637C /* playlist.m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BAD1CC9EEF2008F637C /* playlist.m3u8 */; };
 		9E4D8BB01CC9EEFA008F637C /* sl.m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 9E4D8BAF1CC9EEFA008F637C /* sl.m3u8 */; };
 		AF23D2E2133D524A00A5E64A /* AVPlayerDemoMetadataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF23D2E1133D524A00A5E64A /* AVPlayerDemoMetadataView.xib */; };
@@ -80,6 +82,9 @@
 		83CFBB3411AC00AD00A337F0 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		84C18D41172F40C900E0F687 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* AVPlayerDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AVPlayerDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		9E3F5AC21CDA3B8D00492661 /* M3u8Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M3u8Media.h; sourceTree = "<group>"; };
+		9E3F5AC31CDA3B8D00492661 /* M3u8Media.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = M3u8Media.m; sourceTree = "<group>"; };
+		9E3F5AC51CDA3CA800492661 /* test.m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.m3u8; sourceTree = "<group>"; };
 		9E4D8BAD1CC9EEF2008F637C /* playlist.m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = playlist.m3u8; sourceTree = "<group>"; };
 		9E4D8BAF1CC9EEFA008F637C /* sl.m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sl.m3u8; sourceTree = "<group>"; };
 		AF23D2D9133D523500A5E64A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/AVPlayerDemoMetadataView.xib; sourceTree = "<group>"; };
@@ -159,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */,
+				9E3F5AC51CDA3CA800492661 /* test.m3u8 */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -240,6 +246,8 @@
 		AFD07403134838B200C50031 /* Playback */ = {
 			isa = PBXGroup;
 			children = (
+				9E3F5AC21CDA3B8D00492661 /* M3u8Media.h */,
+				9E3F5AC31CDA3B8D00492661 /* M3u8Media.m */,
 				832FD03011AC05FE0004EA2D /* AVPlayerDemoPlaybackViewController.h */,
 				832FD03111AC05FE0004EA2D /* AVPlayerDemoPlaybackViewController.m */,
 				83069BFE11A9FC93006897BE /* AVPlayerDemoPlaybackView.h */,
@@ -330,6 +338,7 @@
 				AFFB6C35133C5AF500530D6D /* Icon@2x.png in Resources */,
 				AFFB6C36133C5AF500530D6D /* Icon.png in Resources */,
 				AFFB6C37133C5AF500530D6D /* Icon-Small@2x.png in Resources */,
+				9E3F5AC61CDA3CA800492661 /* test.m3u8 in Resources */,
 				AFFB6C38133C5AF500530D6D /* Icon-Small.png in Resources */,
 				9E4D8BAE1CC9EEF2008F637C /* playlist.m3u8 in Resources */,
 				AFFB6C39133C5AF500530D6D /* Icon-Small-50.png in Resources */,
@@ -370,6 +379,7 @@
 				AFCF602913940F9B00D7A99C /* AssetBrowserItem.m in Sources */,
 				AFCF602A13940F9B00D7A99C /* AssetBrowserController.m in Sources */,
 				AFCF602D1394113200D7A99C /* DirectoryWatcher.m in Sources */,
+				9E3F5AC41CDA3B8D00492661 /* M3u8Media.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
