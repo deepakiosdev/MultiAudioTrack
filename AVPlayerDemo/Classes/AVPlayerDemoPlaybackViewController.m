@@ -54,7 +54,7 @@
 
 @interface AVPlayerDemoPlaybackViewController  () <UIPopoverPresentationControllerDelegate>
 {
-
+    int index;
 }
 
 @property (nonatomic, strong) NSMutableArray* audioTracks;
@@ -197,10 +197,15 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
 		  mURL = [URL copy];
         //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
         //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
-        //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
-        // mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
+           mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
+                //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear4/prog_index.m3u8"];  //737777
+      //  mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear3/prog_index.m3u8"];  //484444
+       // mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8"];  //311111
+        
+        
+         //mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
        // mURL = [NSURL URLWithString:@"http://www.example.com/hls-vod/audio-only/video1.mp4.m3u8"];
-        mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/gear2/prog_index.m3u8"];
+       // mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/gear2/prog_index.m3u8"];
 
 
         //
@@ -223,8 +228,46 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
 
 - (void)switchToNextURL:(NSURL*)URL
 {
-    URL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/gear4/prog_index.m3u8"];
+    ++index;
 
+    switch (index) {
+        case 1:
+            NSLog(@"Set Prefred bitrate:311111");
+           // URL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8"];  //311111
+            self.playerItem.preferredPeakBitRate = 311111;
+            break;
+        case 2:
+            NSLog(@"Set Prefred bitrate:484444");
+            //URL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear3/prog_index.m3u8"];  //484444
+
+            self.playerItem.preferredPeakBitRate = 484444;
+
+            break;
+        case 3:
+            NSLog(@"Set Prefred bitrate:737777");
+
+            //URL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear4/prog_index.m3u8"];  //737777
+
+            self.playerItem.preferredPeakBitRate = 737777;
+
+            break;
+        case 4:
+            NSLog(@"Set Prefred bitrate:200000");
+
+           // URL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"]; //200000
+            self.playerItem.preferredPeakBitRate = 200000;
+
+            break;
+        default:
+            NSLog(@"Set Prefred bitrate:200000");
+
+             //URL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
+            self.playerItem.preferredPeakBitRate = 200000;
+            break;
+    }
+    if (index == 4) {
+        index = 0;
+    }
     self.lastTime = self.player.currentItem.currentTime;
     if (mURL != URL)
     {
@@ -536,9 +579,9 @@ float volume = 0.0;
     for (AVPlayerItemAccessLogEvent* event in accessLog.events) {
         NSLog(@"event:%@",event);
         NSLog(@"1========indicatedBitrate:%f",event.indicatedBitrate);
+        NSLog(@"1========observedBitrate:%f",event.observedBitrate);
+
     }
-    
-   
 }
 
 - (void)handleAVPlayerAccess:(NSNotification *)notif {
@@ -1501,23 +1544,23 @@ float volume = 0.0;
 
                 NSLog(@"URL---%@",asset.URL);
                 
-                self.bandwidthArray = [self getBandwidthsFromM3u8:@""];
+                //self.bandwidthArray = [self getBandwidthsFromM3u8:@""];
 
-                NSLog(@"parseM3u8:%@",self.bandwidthArray);
+               // NSLog(@"parseM3u8:%@",self.bandwidthArray);
 
                  self.selectedTrackIndex = nil;
                 [self.audioTracks removeAllObjects];
                 [self.selectedAudioTracks removeAllObjects];
                 
-                [self getAllMediaCharacteristics];
-                [self checkEnabledAudioTracks];
+               // [self getAllMediaCharacteristics];
+                //[self checkEnabledAudioTracks];
                 
                 [self getBitRateFromAVPlayerItem:self.mPlayer.currentItem];
                 /*[self getAvailableAudioTracks];
                 [self enableAllTracks];
                 [self checkEnabledAudioTracks];*/
 
-                [self getAvailableAudioTracks];
+                //[self getAvailableAudioTracks];
                 [self playSelectedAudioTracks:self.selectedAudioTracks];
                 [self initScrubberTimer];
                 [self enableScrubber];
@@ -1569,8 +1612,6 @@ float volume = 0.0;
 	{
 		[super observeValueForKeyPath:path ofObject:object change:change context:context];
 	}
-    
-    
     
 }
 

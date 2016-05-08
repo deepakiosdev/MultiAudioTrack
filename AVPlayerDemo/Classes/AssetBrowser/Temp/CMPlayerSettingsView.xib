@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="C6C-3g-u1j" customClass="CMPlayerSettingsView">
+            <rect key="frame" x="0.0" y="0.0" width="350" height="150"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Oid-E7-YOc" userLabel="categories">
+                    <rect key="frame" x="0.0" y="0.0" width="350" height="98"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kBa-tf-gvT" userLabel="Audio">
+                            <rect key="frame" x="75" y="11" width="80" height="80"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="80" id="CQp-zI-d72"/>
+                                <constraint firstAttribute="width" constant="80" id="Pee-gX-NWZ"/>
+                            </constraints>
+                            <state key="normal" backgroundImage="audioOff"/>
+                            <state key="selected" backgroundImage="audioOn">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted" backgroundImage="audioOn"/>
+                            <connections>
+                                <action selector="audioTrackButtonAction:" destination="C6C-3g-u1j" eventType="touchUpInside" id="EZn-SQ-XZt"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3mY-Ot-8VP" userLabel="Bitrate">
+                            <rect key="frame" x="195" y="11" width="80" height="80"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="80" id="Z0R-YH-rLH"/>
+                                <constraint firstAttribute="width" constant="80" id="q24-iQ-WoJ"/>
+                            </constraints>
+                            <state key="normal" backgroundImage="bitrateOff"/>
+                            <state key="selected" backgroundImage="bitrateOn">
+                                <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted" backgroundImage="bitrateOn"/>
+                            <connections>
+                                <action selector="bitrateButtonAction:" destination="C6C-3g-u1j" eventType="touchUpInside" id="NeA-du-kIG"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" red="0.16078431372549018" green="0.16078431372549018" blue="0.16078431372549018" alpha="0.69999999999999996" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="350" id="6pe-7w-UC9"/>
+                        <constraint firstAttribute="height" constant="98" id="Wrs-fX-1UX"/>
+                        <constraint firstAttribute="bottom" secondItem="kBa-tf-gvT" secondAttribute="bottom" constant="7" id="asV-N8-9qw"/>
+                        <constraint firstItem="3mY-Ot-8VP" firstAttribute="leading" secondItem="kBa-tf-gvT" secondAttribute="trailing" constant="40" id="cCq-Pv-ltx"/>
+                        <constraint firstItem="kBa-tf-gvT" firstAttribute="leading" secondItem="Oid-E7-YOc" secondAttribute="leading" constant="75" id="e0c-ce-xjQ"/>
+                        <constraint firstAttribute="bottom" secondItem="3mY-Ot-8VP" secondAttribute="bottom" constant="7" id="g4g-uF-3Yg"/>
+                        <constraint firstItem="3mY-Ot-8VP" firstAttribute="top" secondItem="Oid-E7-YOc" secondAttribute="top" constant="11" id="w6J-5G-m12"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dTh-Kx-ZwJ" userLabel="options">
+                    <rect key="frame" x="0.0" y="98" width="350" height="52"/>
+                    <subviews>
+                        <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nnn-A1-eny">
+                            <rect key="frame" x="15" y="0.0" width="320" height="52"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        </scrollView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.22352941179999999" green="0.22352941179999999" blue="0.22352941179999999" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="Nnn-A1-eny" firstAttribute="top" secondItem="dTh-Kx-ZwJ" secondAttribute="top" id="1Rc-NB-OaQ"/>
+                        <constraint firstAttribute="bottom" secondItem="Nnn-A1-eny" secondAttribute="bottom" id="h8m-Dc-lu8"/>
+                        <constraint firstItem="Nnn-A1-eny" firstAttribute="leading" secondItem="dTh-Kx-ZwJ" secondAttribute="leading" constant="15" id="rei-74-2eL"/>
+                        <constraint firstAttribute="trailing" secondItem="Nnn-A1-eny" secondAttribute="trailing" constant="15" id="uei-4R-0ut"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <gestureRecognizers/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="dTh-Kx-ZwJ" secondAttribute="bottom" id="2Bw-LX-1Wv"/>
+                <constraint firstItem="dTh-Kx-ZwJ" firstAttribute="top" secondItem="Oid-E7-YOc" secondAttribute="bottom" id="5fA-3D-JTn"/>
+                <constraint firstItem="dTh-Kx-ZwJ" firstAttribute="leading" secondItem="Oid-E7-YOc" secondAttribute="leading" id="Oud-Sr-twF"/>
+                <constraint firstAttribute="trailing" secondItem="dTh-Kx-ZwJ" secondAttribute="trailing" id="Qmd-ma-cOj"/>
+                <constraint firstItem="Oid-E7-YOc" firstAttribute="top" secondItem="C6C-3g-u1j" secondAttribute="top" id="Zis-Af-ffX"/>
+                <constraint firstAttribute="trailing" secondItem="Oid-E7-YOc" secondAttribute="trailing" id="mVO-6h-8LY"/>
+                <constraint firstItem="Oid-E7-YOc" firstAttribute="leading" secondItem="C6C-3g-u1j" secondAttribute="leading" id="nnd-Z2-oK0"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="audioBtn" destination="kBa-tf-gvT" id="wvr-YW-8Aw"/>
+                <outlet property="audioLeading" destination="e0c-ce-xjQ" id="3Qb-mD-zgX"/>
+                <outlet property="bitrateBtn" destination="3mY-Ot-8VP" id="mIb-QI-gAv"/>
+                <outlet property="scrollView" destination="Nnn-A1-eny" id="WVq-2u-Iyy"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="audioOff" width="80" height="80"/>
+        <image name="audioOn" width="80" height="80"/>
+        <image name="bitrateOff" width="80" height="80"/>
+        <image name="bitrateOn" width="80" height="80"/>
+    </resources>
+</document>
