@@ -197,7 +197,7 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
 		  mURL = [URL copy];
         //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
         //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
-           mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
+           //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
                 //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear4/prog_index.m3u8"];  //737777
       //  mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear3/prog_index.m3u8"];  //484444
        // mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8"];  //311111
@@ -599,6 +599,84 @@ float volume = 0.0;
 
     }
 }
+
+- (void)stringEqualityTest {
+    
+    NSString *str1 = @"Track";
+    NSString *str2 = @"track";
+    
+    
+    if ([str1 isEqualToString:str2]) {
+        NSLog(@"Test one is done");
+    }
+
+    if ([str1 caseInsensitiveCompare:str2]) {
+        NSLog(@"Test two is done");
+    }
+    
+    if ([str1 compare:str2]) {
+        NSLog(@"Test three is done");
+    }
+    
+}
+
+-(NSArray*)getAudioTracks
+{
+    [self stringEqualityTest];
+    NSMutableArray *audioTracks = [NSMutableArray new];
+    AVURLAsset *asset            = (AVURLAsset *)self.player.currentItem.asset;
+    
+    AVMediaSelectionGroup *audio = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+    
+    for (AVMediaSelectionOption *option in audio.options)
+    {
+        [audioTracks addObject:[option displayName]];
+    }
+    
+    for (NSUInteger i = 0; i < [[asset tracksWithMediaType:AVMediaTypeAudio] count]; i++)
+    {
+        AVAssetTrack *option = [asset tracksWithMediaType:AVMediaTypeAudio][i];
+        
+        NSString *displayName = [self getLanguageNameFromLanguageCode:[option languageCode]];
+        
+        NSInteger indexObj = [audioTracks indexOfObjectPassingTest:^BOOL(AVMediaSelectionOption *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+             NSLog(@"indexObj=========");
+
+            NSLog(@"displayName:%@",[obj displayName]);
+
+            return (![[obj displayName] caseInsensitiveCompare:displayName]);
+        }];
+        NSLog(@"indexObj:%ld",(long)indexObj);
+
+        
+        if([displayName caseInsensitiveCompare:@"Track"]) {
+            displayName = [NSString stringWithFormat:@"Track %lu", (unsigned long)i];
+        }
+        
+        if(indexObj == NSNotFound)
+        {
+            [audioTracks addObject:displayName];
+        }
+    }
+    NSLog(@"Using new logic audioTracks:%@",audioTracks);
+    return audioTracks;
+}
+
+/**
+  * Get Audio track's full language name from language code
+  */
+-(NSString *)getLanguageNameFromLanguageCode:(NSString *)languageCode
+{
+    NSString *displayName  = @"Track";
+    if (languageCode.length == 0 || [languageCode isEqualToString:@"und"]) {
+          return displayName;
+        }
+     NSLocale *englishLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en"];
+     displayName = [[englishLocale displayNameForKey:NSLocaleLanguageCode value:languageCode] capitalizedString];
+   
+    return displayName;
+}
+
 
 - (NSArray *)getAvailableAudioTracks
 {
@@ -1552,6 +1630,9 @@ float volume = 0.0;
                 [self.audioTracks removeAllObjects];
                 [self.selectedAudioTracks removeAllObjects];
                 
+                [self getAvailableAudioTracks];
+                [self getAudioTracks];
+
                // [self getAllMediaCharacteristics];
                 //[self checkEnabledAudioTracks];
                 
