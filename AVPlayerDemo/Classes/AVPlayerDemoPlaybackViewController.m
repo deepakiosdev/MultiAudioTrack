@@ -51,14 +51,19 @@
 #import "AVPlayerDemoMetadataViewController.h"
 #import "PopViewController.h"
 #import "M3u8Media.h"
+#import "PreviewCell.h"
 
 @interface AVPlayerDemoPlaybackViewController  () <UIPopoverPresentationControllerDelegate>
 {
     int index;
 }
+@property (weak, nonatomic) IBOutlet UICollectionView *previewCollectionView;
+@property (weak, nonatomic) IBOutlet UIImageView *previewImageView;
 
 @property (nonatomic, strong) NSMutableArray* audioTracks;
 @property (nonatomic, strong) NSMutableArray* selectedAudioTracks;
+@property (nonatomic, strong) NSMutableArray* thumbnailsArray;
+
 @property (nonatomic, strong) AVMediaSelectionOption* selectedAudioOption;
 @property (nonatomic) float lastBitRate;
 @property (nonatomic, strong) NSArray *bandwidthArray;
@@ -66,6 +71,7 @@
 @property (strong) AVPlayerItem* playerItem;
 @property (nonatomic, strong) M3u8Media *selectedBitrate;
 @property (nonatomic) CMTime lastTime;
+@property (nonatomic) double scrubTime;
 
 
 @property (nonatomic) NSUInteger selectedTrackIndex;
@@ -203,7 +209,7 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
        // mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8"];  //311111
         
         
-         //mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
+        // mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"];
        // mURL = [NSURL URLWithString:@"http://www.example.com/hls-vod/audio-only/video1.mp4.m3u8"];
        // mURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/gear2/prog_index.m3u8"];
 
@@ -1088,36 +1094,99 @@ float volume = 0.0;
 }
 
 /* Set the player current time to match the scrubber position. */
-- (IBAction)scrub:(id)sender
+- (IBAction)scrub:(UISlider *)sender
 {
-	if ([sender isKindOfClass:[UISlider class]] && !isSeeking)
-	{
-		isSeeking = YES;
-		UISlider* slider = sender;
-		
-		CMTime playerDuration = [self playerItemDuration];
-		if (CMTIME_IS_INVALID(playerDuration)) {
-			return;
-		} 
-		
-		double duration = CMTimeGetSeconds(playerDuration);
-		if (isfinite(duration))
-		{
-			float minValue = [slider minimumValue];
-			float maxValue = [slider maximumValue];
-			float value = [slider value];
-			
-			double time = duration * (value - minValue) / (maxValue - minValue);
-			
-			[self.mPlayer seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
-				dispatch_async(dispatch_get_main_queue(), ^{
-					isSeeking = NO;
-				});
-			}];
-		}
-	}
+    
+}
+-(void)generatePreviewImageForSecond:(double)second
+{
+    
+    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:self.player.currentItem.asset];
+    imageGenerator.appliesPreferredTrackTransform = YES;
+    CGSize maxSize = CGSizeMake(100, 100);
+    imageGenerator.maximumSize = maxSize;
+    
+    CMTime timeSec = CMTimeMakeWithSeconds(second, [self getCurrentTime].timescale);
+    CGImageRef imgRef = [imageGenerator copyCGImageAtTime:timeSec actualTime:NULL error:nil];
+    UIImage *thumbNailImage = [[UIImage alloc] initWithCGImage:imgRef];
+    
+    dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       _previewImageView.hidden = NO;
+                       _previewImageView.image = thumbNailImage;
+                   });
+    
 }
 
+- (void)onSliderValChanged:(UISlider*)sender forEvent:(UIEvent*)event
+{
+    
+    UITouch *touchEvent = [[event allTouches] anyObject];
+    switch (touchEvent.phase) {
+        case UITouchPhaseBegan:
+            // handle drag began
+            NSLog(@"UITouchPhaseBegan");
+            break;
+        case UITouchPhaseMoved:
+            // handle drag moved
+            NSLog(@"UITouchPhaseMoved");
+            if (sender.value == _scrubTime) {
+                return;
+            }
+            
+            if ([sender isKindOfClass:[UISlider class]] && !isSeeking)
+            {
+                isSeeking = YES;
+                UISlider* slider = sender;
+                
+                CMTime playerDuration = [self playerItemDuration];
+                if (CMTIME_IS_INVALID(playerDuration)) {
+                    return;
+                }
+                
+                double duration = CMTimeGetSeconds(playerDuration);
+                if (isfinite(duration))
+                {
+                    float minValue = [slider minimumValue];
+                    float maxValue = [slider maximumValue];
+                    float value = [slider value];
+                    
+                    double time = duration * (value - minValue) / (maxValue - minValue);
+                    _scrubTime = time;
+                    ////
+
+                    CGRect _thumbRect = [sender thumbRectForBounds:sender.bounds
+                                                         trackRect:[sender trackRectForBounds:sender.bounds]
+                                                             value:sender.value];
+                    CGRect thumbRect = [self.view convertRect:_thumbRect fromView:sender];
+                    CGRect frame    = _previewImageView.frame;
+                    frame.origin.x  = (thumbRect.origin.x + thumbRect.size.width/2) - _previewImageView.frame.size.width/2;
+                    _previewImageView.frame = frame;
+                    [self generatePreviewImageForSecond:time];
+
+                    /////
+                    
+                    [self.mPlayer seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                           // _previewImageView.hidden = NO;
+                           // _previewImageView.image = _thumbnailsArray[(int)time];
+                            isSeeking = NO;
+                        });
+                    }];
+                }
+            }
+            
+            break;
+        case UITouchPhaseEnded:
+            // handle drag ended
+            NSLog(@"UITouchPhaseEnded");
+            break;
+        default:
+            NSLog(@"default");
+
+            break;
+    }
+}
 /* The user has released the movie thumb control to stop scrubbing through the movie. */
 - (IBAction)endScrubbing:(id)sender
 {
@@ -1149,6 +1218,20 @@ float volume = 0.0;
 		[self.mPlayer setRate:mRestoreAfterScrubbingRate];
 		mRestoreAfterScrubbingRate = 0.f;
 	}
+    
+    [self performSelector:@selector(hidePreviewImageView) withObject:nil afterDelay:.5];
+
+}
+
+- (IBAction)endDraging:(UISlider *)sender {
+    _previewImageView.hidden = YES;
+
+}
+
+-(void)hidePreviewImageView
+{
+    _previewImageView.hidden = YES;
+
 }
 
 - (BOOL)isScrubbing
@@ -1207,6 +1290,13 @@ float volume = 0.0;
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+
+    [_previewCollectionView registerNib:[UINib nibWithNibName:@"PreviewCell" bundle:nil]
+             forCellWithReuseIdentifier:@"Cell"];
+    _thumbnailsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    _previewCollectionView.hidden = YES;
+    [mScrubber addTarget:self action:@selector(onSliderValChanged:forEvent:) forControlEvents:UIControlEventValueChanged];
     
     self.audioTracks = [[NSMutableArray alloc] init];
     // Add select track button
@@ -1252,7 +1342,6 @@ float volume = 0.0;
                                              selector:@selector(handleAVPlayerAccess:)
                                                  name:AVPlayerItemNewAccessLogEntryNotification
                                                object:nil];
-    [super viewDidLoad];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -1621,6 +1710,10 @@ float volume = 0.0;
                 AVURLAsset *asset = (AVURLAsset *)[[self.mPlayer currentItem] asset];
 
                 NSLog(@"URL---%@",asset.URL);
+                if (!_thumbnailsArray.count) {
+                     [self generateThumbImage];
+                }
+               
                 
                 //self.bandwidthArray = [self getBandwidthsFromM3u8:@""];
 
@@ -1630,8 +1723,8 @@ float volume = 0.0;
                 [self.audioTracks removeAllObjects];
                 [self.selectedAudioTracks removeAllObjects];
                 
-                [self getAvailableAudioTracks];
-                [self getAudioTracks];
+                //[self getAvailableAudioTracks];
+                //[self getAudioTracks];
 
                // [self getAllMediaCharacteristics];
                 //[self checkEnabledAudioTracks];
@@ -1642,10 +1735,15 @@ float volume = 0.0;
                 [self checkEnabledAudioTracks];*/
 
                 //[self getAvailableAudioTracks];
-                [self playSelectedAudioTracks:self.selectedAudioTracks];
+                //[self playSelectedAudioTracks:self.selectedAudioTracks];
+                
+                
+                //==================
                 [self initScrubberTimer];
                 [self enableScrubber];
                 [self enablePlayerButtons];
+                
+                
             }
             break;
                 
@@ -1693,6 +1791,59 @@ float volume = 0.0;
 	{
 		[super observeValueForKeyPath:path ofObject:object change:change context:context];
 	}
+    
+}
+
+-(void)generateThumbImage
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+                   {
+                       AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:self.player.currentItem.asset];
+                       imageGenerator.appliesPreferredTrackTransform = YES;
+                       CGSize maxSize = CGSizeMake(100, 100);
+                       imageGenerator.maximumSize = maxSize;
+                       
+                       float duration = CMTimeGetSeconds([self playerItemDuration]);
+                       
+                       for(float i = 0.0; i < duration; ++i)
+                       {
+                           CMTime timeSec = CMTimeMakeWithSeconds(i, [self getCurrentTime].timescale);
+                           CGImageRef imgRef = [imageGenerator copyCGImageAtTime:timeSec actualTime:NULL error:nil];
+                           UIImage *thumbNailImage = [[UIImage alloc] initWithCGImage:imgRef];
+                           
+                           if (thumbNailImage) {
+                               [_thumbnailsArray addObject:thumbNailImage];
+                           }
+                       }
+                       
+                       dispatch_async(dispatch_get_main_queue(), ^
+                                      {
+                                          [_previewCollectionView reloadData];
+                                          
+                                      });
+                   });
+    
+}
+
+#pragma  mark - UICollectionViewDataSource methods
+
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return [_thumbnailsArray count];
+}
+
+-(UICollectionViewCell*)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PreviewCell  *cell     = (PreviewCell*)[collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
+    cell.thumbNail.image                = _thumbnailsArray[indexPath.item];
+    
+    return cell;
+}
+
+
+#pragma  mark - UICollectionViewDelegate methods
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
     
 }
 

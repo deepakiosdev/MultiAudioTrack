@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0038F2801CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */; };
+		008138EC1D880C21000216BC /* PreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 008138EB1D880C21000216BC /* PreviewCell.m */; };
+		008138EE1D881AC6000216BC /* PreviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 008138ED1D881AC6000216BC /* PreviewCell.xib */; };
 		00E4E4EF1CCB65E400E695B0 /* PopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E4E4ED1CCB65E400E695B0 /* PopViewController.m */; };
 		00E4E4F01CCB65E400E695B0 /* PopViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */; };
+		00E709BF1D882548007994E7 /* bday_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 00E709BE1D882548007994E7 /* bday_image.png */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -58,9 +61,13 @@
 
 /* Begin PBXFileReference section */
 		0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bipbop_16x9_variant(1).m3u8"; sourceTree = "<group>"; };
+		008138EA1D880C21000216BC /* PreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewCell.h; sourceTree = "<group>"; };
+		008138EB1D880C21000216BC /* PreviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewCell.m; sourceTree = "<group>"; };
+		008138ED1D881AC6000216BC /* PreviewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreviewCell.xib; sourceTree = "<group>"; };
 		00E4E4EC1CCB65E400E695B0 /* PopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopViewController.h; sourceTree = "<group>"; };
 		00E4E4ED1CCB65E400E695B0 /* PopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopViewController.m; sourceTree = "<group>"; };
 		00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PopViewController.xib; sourceTree = "<group>"; };
+		00E709BE1D882548007994E7 /* bday_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bday_image.png; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* AVPlayerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AVPlayerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -195,6 +202,7 @@
 				AFFB6C28133C5AD500530D6D /* images */,
 				84C18D41172F40C900E0F687 /* Default-568h@2x.png */,
 				9E4D8BAF1CC9EEFA008F637C /* sl.m3u8 */,
+				00E709BE1D882548007994E7 /* bday_image.png */,
 				8D1107310486CEB800E47090 /* AVPlayerDemo-Info.plist */,
 				9E4D8BAD1CC9EEF2008F637C /* playlist.m3u8 */,
 			);
@@ -255,6 +263,9 @@
 				00E4E4EC1CCB65E400E695B0 /* PopViewController.h */,
 				00E4E4ED1CCB65E400E695B0 /* PopViewController.m */,
 				00E4E4EE1CCB65E400E695B0 /* PopViewController.xib */,
+				008138EA1D880C21000216BC /* PreviewCell.h */,
+				008138EB1D880C21000216BC /* PreviewCell.m */,
+				008138ED1D881AC6000216BC /* PreviewCell.xib */,
 			);
 			name = Playback;
 			sourceTree = "<group>";
@@ -306,7 +317,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0720;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AVPlayerDemo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -336,6 +347,7 @@
 				AFFB6C34133C5AF500530D6D /* Placeholder.png in Resources */,
 				0038F2801CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 in Resources */,
 				AFFB6C35133C5AF500530D6D /* Icon@2x.png in Resources */,
+				008138EE1D881AC6000216BC /* PreviewCell.xib in Resources */,
 				AFFB6C36133C5AF500530D6D /* Icon.png in Resources */,
 				AFFB6C37133C5AF500530D6D /* Icon-Small@2x.png in Resources */,
 				9E3F5AC61CDA3CA800492661 /* test.m3u8 in Resources */,
@@ -358,6 +370,7 @@
 				AFB5B8461399843F006D0A2D /* Browser-AudioOnly@2x.png in Resources */,
 				AFB5B8471399843F006D0A2D /* Browser-AudioOnly.png in Resources */,
 				84C18D42172F40C900E0F687 /* Default-568h@2x.png in Resources */,
+				00E709BF1D882548007994E7 /* bday_image.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,6 +381,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				008138EC1D880C21000216BC /* PreviewCell.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				83069C0011A9FC93006897BE /* AVPlayerDemoPlaybackView.m in Sources */,
 				832FD03211AC05FE0004EA2D /* AVPlayerDemoPlaybackViewController.m in Sources */,
@@ -448,6 +462,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "AVPlayerDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = AVPlayerDemo;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -464,6 +479,7 @@
 				COPY_PHASE_STRIP = YES;
 				INFOPLIST_FILE = "AVPlayerDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = AVPlayerDemo;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -478,6 +494,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

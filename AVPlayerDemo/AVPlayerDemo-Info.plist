@@ -33,7 +33,7 @@
 		<string>Icon-Small@2x.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -46,15 +46,15 @@
 	<string>1.3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMainNibFile</key>
-	<string>AVPlayerDemoWindow</string>
-	<key>NSMainNibFile~ipad</key>
-	<string>AVPlayerDemoWindow-iPad</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSMainNibFile</key>
+	<string>AVPlayerDemoWindow</string>
+	<key>NSMainNibFile~ipad</key>
+	<string>AVPlayerDemoWindow-iPad</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 </dict>

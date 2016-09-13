@@ -215,9 +215,8 @@ typedef void (^AlertViewCompletionHandler)(void);
     [self didPickURL:asset];
 }
 
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
-    /* Don't show the navigation bar when displaying the assets browser view */
+- (void)navigationController:(UINavigationController *)navigationController willShowViewConter:(UIViewController *)viewController animated:(BOOL)animated
+{  /* Don't show the navigation bar when displaying the assets browser view */
     if (viewController == self->tabBarController) {
         navigationController.navigationBarHidden = YES;
     }
@@ -226,6 +225,7 @@ typedef void (^AlertViewCompletionHandler)(void);
         navigationController.navigationBarHidden = NO;        
     }
 }
+
 
 
 @end
