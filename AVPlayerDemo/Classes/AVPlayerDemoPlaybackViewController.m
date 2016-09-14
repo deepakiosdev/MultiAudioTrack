@@ -72,7 +72,7 @@
 @property (nonatomic, strong) M3u8Media *selectedBitrate;
 @property (nonatomic) CMTime lastTime;
 @property (nonatomic) double scrubTime;
-
+@property (nonatomic, strong) AVPlayerItemVideoOutput* output;
 
 @property (nonatomic) NSUInteger selectedTrackIndex;
 @property (nonatomic, strong) UIButton *btnSelectLanguage;
@@ -201,11 +201,11 @@ static void *AVPlayerDemoPlaybackViewControllerCurrentItemObservationContext = &
 	if (mURL != URL)
 	{
 		  mURL = [URL copy];
-        //mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
+        mURL = [NSURL URLWithString:@"http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8"];
         //mURL = [NSURL URLWithString:@"http://10.1.177.32:100/unencrypted/25fps/rekkit_new/index.m3u8"];
            //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
                 //mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear4/prog_index.m3u8"];  //737777
-      //  mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear3/prog_index.m3u8"];  //484444
+     //  mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear3/prog_index.m3u8"];  //484444
        // mURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/gear2/prog_index.m3u8"];  //311111
         
         
@@ -1098,6 +1098,40 @@ float volume = 0.0;
 {
     
 }
+
+-(void)generateHLSPreviewImageForSecond:(double)second
+{
+    CMTime timeSec = CMTimeMakeWithSeconds(second, [self getCurrentTime].timescale);
+
+    CVPixelBufferRef pixelBuffer = [_output copyPixelBufferForItemTime:timeSec itemTimeForDisplay:nil];
+    CIImage *ciImage = [CIImage imageWithCVPixelBuffer:pixelBuffer];
+    
+    CIContext *temporaryContext = [CIContext contextWithOptions:nil];
+   /* CGImageRef videoImage = [temporaryContext
+                             createCGImage:ciImage
+                             fromRect:CGRectMake(0, 0,
+                                                 CVPixelBufferGetWidth(pixelBuffer),
+                                                 CVPixelBufferGetHeight(pixelBuffer))];*/
+    
+    CGImageRef videoImage = [temporaryContext
+                             createCGImage:ciImage
+                             fromRect:CGRectMake(0, 0,
+                                                 100,
+                                                 100)];
+    
+    UIImage *image = [UIImage imageWithCGImage:videoImage];
+    //image = [image cropImageToSize:maxSize withProportionDiffLargerThan:IMAGE_PROPORTION_DIFF];
+    dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       _previewImageView.hidden = NO;
+                       _previewImageView.image = image;
+                   });
+    if ( videoImage )
+    {
+        CGImageRelease(videoImage);
+    }
+}
+
 -(void)generatePreviewImageForSecond:(double)second
 {
     
@@ -1162,8 +1196,12 @@ float volume = 0.0;
                     CGRect frame    = _previewImageView.frame;
                     frame.origin.x  = (thumbRect.origin.x + thumbRect.size.width/2) - _previewImageView.frame.size.width/2;
                     _previewImageView.frame = frame;
-                    [self generatePreviewImageForSecond:time];
-
+                    if(![[self getCurrentURLFromPlayer].pathExtension caseInsensitiveCompare:@"m3u8"]) {
+                        [self generateHLSPreviewImageForSecond:time];
+                    } else {
+                       [self generatePreviewImageForSecond:time];
+                    }
+                   
                     /////
                     
                     [self.mPlayer seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
@@ -1363,6 +1401,9 @@ float volume = 0.0;
     return YES;
 }
 
+-(NSString*)getCurrentURLFromPlayer {
+    return [[((AVURLAsset *)self.player.currentItem.asset) URL] absoluteString];
+}
 -(void)setViewDisplayName
 {
     /* Set the view title to the last component of the asset URL. */
@@ -1608,8 +1649,12 @@ float volume = 0.0;
     if (!self.mPlayer)
     {
         /* Get a new AVPlayer initialized to play the specified player item. */
-        [self setPlayer:[AVPlayer playerWithPlayerItem:self.mPlayerItem]];	
-		
+        [self setPlayer:[AVPlayer playerWithPlayerItem:self.mPlayerItem]];
+        
+        NSDictionary* settings = @{ (id)kCVPixelBufferPixelFormatTypeKey : [NSNumber numberWithInt:kCVPixelFormatType_32BGRA] };
+        _output = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:settings];
+        [self.player.currentItem addOutput:_output];
+        
         /* Observe the AVPlayer "currentItem" property to find out when any 
          AVPlayer replaceCurrentItemWithPlayerItem: replacement will/did 
          occur.*/

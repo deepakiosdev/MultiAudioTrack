@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0038F2801CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 in Resources */ = {isa = PBXBuildFile; fileRef = 0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */; };
+		007B960F1D89B5DC001F47A6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 007B960E1D89B5DC001F47A6 /* ImageIO.framework */; };
+		007B96111D89B5E4001F47A6 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 007B96101D89B5E4001F47A6 /* CoreVideo.framework */; };
+		007B96131D89B61C001F47A6 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 007B96121D89B61C001F47A6 /* CoreImage.framework */; };
 		008138EC1D880C21000216BC /* PreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 008138EB1D880C21000216BC /* PreviewCell.m */; };
 		008138EE1D881AC6000216BC /* PreviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 008138ED1D881AC6000216BC /* PreviewCell.xib */; };
 		00E4E4EF1CCB65E400E695B0 /* PopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E4E4ED1CCB65E400E695B0 /* PopViewController.m */; };
@@ -61,6 +64,9 @@
 
 /* Begin PBXFileReference section */
 		0038F27F1CD30CC800EA51B8 /* bipbop_16x9_variant(1).m3u8 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bipbop_16x9_variant(1).m3u8"; sourceTree = "<group>"; };
+		007B960E1D89B5DC001F47A6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		007B96101D89B5E4001F47A6 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		007B96121D89B61C001F47A6 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		008138EA1D880C21000216BC /* PreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewCell.h; sourceTree = "<group>"; };
 		008138EB1D880C21000216BC /* PreviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewCell.m; sourceTree = "<group>"; };
 		008138ED1D881AC6000216BC /* PreviewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreviewCell.xib; sourceTree = "<group>"; };
@@ -132,6 +138,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				007B96131D89B61C001F47A6 /* CoreImage.framework in Frameworks */,
+				007B96111D89B5E4001F47A6 /* CoreVideo.framework in Frameworks */,
+				007B960F1D89B5DC001F47A6 /* ImageIO.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -212,6 +221,9 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				007B96121D89B61C001F47A6 /* CoreImage.framework */,
+				007B96101D89B5E4001F47A6 /* CoreVideo.framework */,
+				007B960E1D89B5DC001F47A6 /* ImageIO.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
